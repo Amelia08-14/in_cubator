@@ -79,7 +79,7 @@ export default function Footer() {
 
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-xs tracking-widest text-gray-500 mb-2 uppercase">Contact</h4>
-            <p className="text-gray-300 text-sm">Paris, France</p>
+            <p className="text-gray-300 text-sm">Alger, Hydra, Algérie</p>
             <a href="mailto:contact@in.cubator" className="text-[#c4a4e3] hover:text-white text-sm transition-colors">contact@in.cubator</a>
             <div className="flex items-center gap-4 mt-2">
               <a href="#" className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-xs hover:bg-white hover:text-[#0c051a] transition-all">in</a>

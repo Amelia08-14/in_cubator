@@ -59,13 +59,13 @@ export default function Home() {
           in<span className="text-violet-main font-sans">.</span>cubator
         </div>
         <nav className={`hidden md:flex gap-8 text-xs font-bold tracking-widest uppercase transition-colors duration-500 ${isHeaderDark ? 'text-gray-500' : 'text-gray-400'}`}>
-          <Link href="/candidature" className={`transition-colors ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Candidature</Link>
+          <a href="#candidature" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Candidature</a>
           <span className="text-violet-main/50">•</span>
-          <Link href="/vitrine" className={`transition-colors ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Vitrine</Link>
+          <a href="#vitrine" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Vitrine</a>
           <span className="text-violet-main/50">•</span>
-          <Link href="/mentors" className={`transition-colors ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Mentors</Link>
+          <a href="#mentors" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Mentors</a>
           <span className="text-violet-main/50">•</span>
-          <Link href="/out-cubator" className={`transition-colors ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Out-cubator</Link>
+          <a href="#out-cubator" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Out-cubator</a>
         </nav>
         <div className="flex items-center">
           <Link 
@@ -84,7 +84,7 @@ export default function Home() {
       {/* 
         This wrapper is 300vh tall, creating 3 "screens" worth of scrolling distance.
       */}
-      <div className="relative h-[300vh]" data-theme="dark">
+      <div id="candidature" className="relative h-[300vh]" data-theme="dark">
         {/* 
           The sticky container locks the hero UI to the screen while the user scrolls 
           through the 300vh wrapper.
@@ -190,7 +190,7 @@ export default function Home() {
       </section>
 
       {/* Portfolio / Startups Section (Centralized Scroll) */}
-      <section className="min-h-screen w-full bg-[#fcfcfd] relative z-50 flex flex-col p-8 pt-32 lg:px-24 pb-24 text-[#0c051a]" data-theme="light">
+      <section id="vitrine" className="min-h-screen w-full bg-[#fcfcfd] relative z-50 flex flex-col p-8 pt-32 lg:px-24 pb-24 text-[#0c051a]" data-theme="light">
         {/* Abstract Background Curves */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <svg className="absolute w-[150vw] h-[150vh] -top-[30%] -left-[25%] opacity-10 stroke-[#592d83]" fill="none" viewBox="0 0 1000 1000">
@@ -222,7 +222,7 @@ export default function Home() {
       </section>
 
       {/* Mentors Preview Section */}
-      <section id="mentors-preview" className="w-full bg-white relative z-50 flex items-center justify-center py-32 px-8 text-[#0c051a]" data-theme="light">
+      <section id="mentors" className="w-full bg-white relative z-50 flex items-center justify-center py-32 px-8 text-[#0c051a]" data-theme="light">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col items-center">
           
           <TextReveal 
@@ -318,7 +318,7 @@ export default function Home() {
       </section>
 
       {/* White Spacer Section (Transition to Out-Cubator) */}
-      <section className="w-full min-h-[60vh] bg-[#fcfcfd] relative z-50 flex items-center justify-center p-8 pb-0" data-theme="light">
+      <section id="out-cubator" className="w-full min-h-[60vh] bg-[#fcfcfd] relative z-50 flex items-center justify-center p-8 pb-0" data-theme="light">
         <TextReveal 
           superTitle="NOS ALUMNI"
           text="Des startups qui continuent d'aller loin." 
