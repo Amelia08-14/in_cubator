@@ -59,13 +59,37 @@ export default function Home() {
           in<span className="text-violet-main font-sans">.</span>cubator
         </div>
         <nav className={`hidden md:flex gap-8 text-xs font-bold tracking-widest uppercase transition-colors duration-500 ${isHeaderDark ? 'text-gray-500' : 'text-gray-400'}`}>
-          <a href="#candidature" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Candidature</a>
+          <a 
+            href="#candidature" 
+            onClick={(e) => { e.preventDefault(); const el = document.getElementById('candidature'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
+            className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}
+          >
+            Candidature
+          </a>
           <span className="text-violet-main/50">•</span>
-          <a href="#vitrine" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Vitrine</a>
+          <a 
+            href="#vitrine" 
+            onClick={(e) => { e.preventDefault(); const el = document.getElementById('vitrine'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
+            className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}
+          >
+            Vitrine
+          </a>
           <span className="text-violet-main/50">•</span>
-          <a href="#mentors" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Mentors</a>
+          <a 
+            href="#mentors" 
+            onClick={(e) => { e.preventDefault(); const el = document.getElementById('mentors'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
+            className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}
+          >
+            Mentors
+          </a>
           <span className="text-violet-main/50">•</span>
-          <a href="#out-cubator" className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}>Out-cubator</a>
+          <a 
+            href="#out-cubator" 
+            onClick={(e) => { e.preventDefault(); const el = document.getElementById('out-cubator'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
+            className={`transition-colors cursor-pointer ${isHeaderDark ? 'hover:text-violet-dark' : 'hover:text-white'}`}
+          >
+            Out-cubator
+          </a>
         </nav>
         <div className="flex items-center">
           <Link 
