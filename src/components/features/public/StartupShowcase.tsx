@@ -42,7 +42,7 @@ const startups = [
 
 export default function StartupShowcase() {
   return (
-    <div data-theme="dark" className="w-full relative bg-[#0c051a] py-32 px-4 overflow-hidden">
+    <div data-theme="dark" className="w-full relative bg-[#47295C] py-32 px-4 overflow-hidden">
       
       {/* Hero-like Background Layer */}
       <div className="absolute inset-0 z-0">
@@ -52,12 +52,12 @@ export default function StartupShowcase() {
           fill
           className="object-cover opacity-20"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-[#0c051a]/60 to-[#0c051a]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-[#47295C]/60 to-[#47295C]"></div>
       </div>
 
       <div className="max-w-[1200px] mx-auto w-full relative z-10 flex flex-col gap-16">
         {startups.map((startup) => (
-          <div key={startup.id} className="w-full flex flex-col lg:flex-row gap-8 lg:gap-16 bg-[#0c051a]/40 backdrop-blur-xl text-white p-8 lg:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden">
+          <div key={startup.id} className="w-full flex flex-col lg:flex-row gap-8 lg:gap-16 bg-[#47295C]/40 backdrop-blur-xl text-white p-8 lg:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden">
             
             {/* Left Column (Text & Data) */}
             <div className="flex-1 flex flex-col justify-between">
@@ -136,7 +136,7 @@ export default function StartupShowcase() {
                     fill
                     className="object-cover opacity-60"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-[#592d83]/20 to-transparent mix-blend-screen pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[#964594]/20 to-transparent mix-blend-screen pointer-events-none"></div>
                 </div>
               </div>
             </div>

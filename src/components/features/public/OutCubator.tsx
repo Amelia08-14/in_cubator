@@ -53,16 +53,16 @@ const alumni = [
 
 export default function OutCubator() {
   return (
-    <section className="w-full bg-[#fcfcfd] min-h-screen pt-24 pb-48 relative overflow-hidden text-[#0c051a]" data-theme="light">
+    <section className="w-full bg-[#fcfcfd] bg-pattern min-h-screen pt-24 pb-48 relative overflow-hidden text-[#47295C]" data-theme="light">
       
       {/* Background Decor (Subtle Grid/Dots) */}
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{
-          backgroundImage: 'radial-gradient(#0c051a 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(#47295C 1px, transparent 1px)',
           backgroundSize: '24px 24px'
       }}></div>
       
       {/* Top Left Faint Glow */}
-      <div className="absolute top-0 left-0 w-1/2 h-[400px] bg-[#592d83] rounded-full mix-blend-multiply filter blur-[150px] opacity-[0.02] pointer-events-none z-0"></div>
+      <div className="absolute top-0 left-0 w-1/2 h-[400px] bg-[#964594] rounded-full mix-blend-multiply filter blur-[150px] opacity-[0.02] pointer-events-none z-0"></div>
 
       <div className="max-w-[1400px] mx-auto px-6 relative z-10 flex flex-col gap-24">
         
@@ -72,18 +72,18 @@ export default function OutCubator() {
 
           {/* Faint curved line background decoration */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center opacity-40">
-            <div className="w-[120%] h-[150%] rounded-[100%] border-[1px] border-[#592d83]/30 absolute -left-[20%] rotate-6"></div>
-            <div className="w-2 h-2 rounded-full bg-[#592d83] absolute top-[25%] left-[55%]"></div>
-            <div className="w-2 h-2 rounded-full bg-[#592d83] absolute bottom-[15%] left-[30%]"></div>
+            <div className="w-[120%] h-[150%] rounded-[100%] border-[1px] border-[#964594]/30 absolute -left-[20%] rotate-6"></div>
+            <div className="w-2 h-2 rounded-full bg-[#964594] absolute top-[25%] left-[55%]"></div>
+            <div className="w-2 h-2 rounded-full bg-[#964594] absolute bottom-[15%] left-[30%]"></div>
           </div>
 
           {/* Left: Text */}
           <div className="flex-1 flex flex-col relative z-10 pl-0 xl:pl-16">
-            <span className="text-[#592d83] font-bold text-xs tracking-widest uppercase mb-6 flex items-center gap-4">
+            <span className="text-[#964594] font-bold text-xs tracking-widest uppercase mb-6 flex items-center gap-4">
               OUT-CUBATOR
-              <div className="h-[2px] w-8 bg-[#592d83]"></div>
+              <div className="h-[2px] w-8 bg-[#964594]"></div>
             </span>
-            <h2 className="font-serif font-extrabold text-5xl lg:text-[4.5rem] leading-[1.1] mb-8 tracking-tight text-[#0c051a]">
+            <h2 className="font-serif font-extrabold text-5xl lg:text-[4.5rem] leading-[1.1] mb-8 tracking-tight text-[#47295C]">
               Au-delà de<br />
               l'incubation.<br />
               L'impact durable.
@@ -95,9 +95,9 @@ export default function OutCubator() {
           
           {/* Right: Mission Card */}
           <div className="flex-1 w-full relative z-10 pr-0 xl:pr-12">
-            <div className="w-full relative h-[480px] bg-[#0c051a] rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(12,5,26,0.15)] flex flex-col items-center justify-center text-center p-12 group">
+            <div className="w-full relative h-[480px] bg-[#47295C] rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(12,5,26,0.15)] flex flex-col items-center justify-center text-center p-12 group">
               {/* Subtle background glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#592d83]/20 via-[#0c051a] to-[#0c051a] opacity-80"></div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#964594]/20 via-[#47295C] to-[#47295C] opacity-80"></div>
               
               {/* Swirling faint lines in background */}
               <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -131,7 +131,7 @@ export default function OutCubator() {
         
         {/* Link Row */}
         <div className="flex justify-end mb-8">
-          <Link href="/alumni" className="text-[13px] font-bold text-[#592d83] hover:text-[#0c051a] transition-colors flex items-center gap-2 group">
+          <Link href="/alumni" className="text-[13px] font-bold text-[#964594] hover:text-orange-accent transition-colors flex items-center gap-2 group">
             Voir toutes les startups <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -149,11 +149,11 @@ export default function OutCubator() {
                      <span className="font-bold text-[28px] leading-none">{startup.initial}</span>}
                   </div>
                   <div className="flex flex-col gap-0.5">
-                    <h4 className="font-bold text-[#0c051a] text-[15px] tracking-tight">{startup.name}</h4>
+                    <h4 className="font-bold text-[#47295C] text-[15px] tracking-tight">{startup.name}</h4>
                     <p className="text-[11px] text-[#718096] font-medium">{startup.tags}</p>
                   </div>
                 </div>
-                <ArrowRight size={20} className="text-[#592d83] mr-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={20} className="text-[#964594] mr-2 group-hover:translate-x-1 transition-transform" />
               </div>
             ))}
           </div>

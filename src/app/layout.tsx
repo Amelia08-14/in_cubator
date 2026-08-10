@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto_Slab } from "next/font/google";
 import "./globals.css";
-import LenisProvider from "./components/LenisProvider";
+import LenisProvider from "@/components/layouts/LenisProvider";
 
 const robotoSlab = Roboto_Slab({
   variable: "--font-roboto-slab",

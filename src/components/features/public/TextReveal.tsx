@@ -60,14 +60,14 @@ export default function TextReveal({ text, subtitle, superTitle, className }: Te
     <div ref={containerRef} className={className || "min-h-[70vh] flex flex-col items-center justify-center text-center w-full mb-8 mt-16 px-4 py-20"}>
       {superTitle && (
         <div className="flex flex-col items-center mb-8">
-          <span className="word text-[#592d83] font-extrabold text-[12px] tracking-widest uppercase leading-none">
+          <span className="word text-[#964594] font-extrabold text-[12px] tracking-widest uppercase leading-none">
             {superTitle}
           </span>
-          <div className="word h-[2px] w-8 bg-[#592d83] mt-3"></div>
+          <div className="word h-[2px] w-8 bg-[#964594] mt-3"></div>
         </div>
       )}
       <h2 
-        className="text-4xl md:text-5xl lg:text-[4rem] font-serif font-extrabold text-[#0c051a] leading-[1.2] tracking-tight max-w-6xl mx-auto flex flex-wrap justify-center"
+        className="text-4xl md:text-5xl lg:text-[4rem] font-serif font-extrabold text-[#47295C] leading-[1.2] tracking-tight max-w-6xl mx-auto flex flex-wrap justify-center"
       >
         {words.map((word, i) => (
           <span key={`text-${i}`} className="word mr-[0.25em] mb-2 lg:mb-4">
