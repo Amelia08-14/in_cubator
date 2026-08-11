@@ -12,6 +12,7 @@ export default function Sidebar() {
   const navItems = [
     { name: "Tableau de bord", href: "/espace", icon: LayoutDashboard },
     { name: "Mentors", href: "/espace/mentors", icon: Users },
+    { name: "Documents", href: "/espace/documents", icon: FolderOpen },
     { name: "Deal Room", href: "/espace/deal-room", icon: FolderOpen },
     { name: "Bibliothèque", href: "/espace/bibliotheque", icon: BookOpen },
   ];
