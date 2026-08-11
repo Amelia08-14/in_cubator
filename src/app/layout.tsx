@@ -3,6 +3,8 @@ import { Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import LenisProvider from "@/components/layouts/LenisProvider";
 
+import { Providers } from "@/components/providers/Providers";
+
 const robotoSlab = Roboto_Slab({
   variable: "--font-roboto-slab",
   subsets: ["latin"],
@@ -25,9 +27,11 @@ export default function RootLayout({
       className={`${robotoSlab.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        <LenisProvider>
-          {children}
-        </LenisProvider>
+        <Providers>
+          <LenisProvider>
+            {children}
+          </LenisProvider>
+        </Providers>
       </body>
     </html>
   );

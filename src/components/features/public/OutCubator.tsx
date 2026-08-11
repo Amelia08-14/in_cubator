@@ -53,7 +53,7 @@ const alumni = [
 
 export default function OutCubator() {
   return (
-    <section className="w-full bg-[#fcfcfd] bg-pattern min-h-screen pt-24 pb-48 relative overflow-hidden text-[#47295C]" data-theme="light">
+    <section className="w-full bg-[#fcfcfd] bg-pattern min-h-screen pt-24 pb-48 relative overflow-x-hidden text-[#47295C]" data-theme="light">
       
       {/* Background Decor (Subtle Grid/Dots) */}
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{
@@ -131,7 +131,7 @@ export default function OutCubator() {
         
         {/* Link Row */}
         <div className="flex justify-end mb-8">
-          <Link href="/alumni" className="text-[13px] font-bold text-[#964594] hover:text-orange-accent transition-colors flex items-center gap-2 group">
+          <Link href="/alumni" className="text-[13px] font-bold text-[#964594] hover:text-[#47295C] transition-colors flex items-center gap-2 group">
             Voir toutes les startups <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

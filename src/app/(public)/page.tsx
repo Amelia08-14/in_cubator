@@ -10,7 +10,6 @@ import Footer from "@/components/layouts/Footer";
 
 export default function Home() {
   const [step, setStep] = useState(0);
-  const [isHeaderDark, setIsHeaderDark] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,18 +24,6 @@ export default function Home() {
         setStep(2);
       }
 
-      // Check header theme based on data-theme attribute
-      const sections = document.querySelectorAll('[data-theme]');
-      let currentTheme = 'dark'; // default to dark
-      sections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        // Check if the top of the section is above the middle of the header (approx 40px)
-        // and the bottom of the section is below the middle of the header
-        if (rect.top <= 40 && rect.bottom >= 40) {
-          currentTheme = section.getAttribute('data-theme') || 'dark';
-        }
-      });
-      setIsHeaderDark(currentTheme === 'light');
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -53,65 +40,6 @@ export default function Home() {
 
   return (
     <div className="font-sans bg-violet-dark">
-      {/* Global Fixed Header */}
-      <header className={`fixed top-0 left-0 w-full z-[100] px-8 py-6 flex justify-between items-center transition-all duration-500 ${isHeaderDark ? 'bg-white border-b border-gray-200 shadow-sm' : `bg-[#47295C]/80 backdrop-blur-md border-b ${step > 0 ? 'border-white/10' : 'border-transparent'}`}`}>
-        <Link href="/" className="flex items-center">
-          <Image 
-            src="/logo.png" 
-            alt="INCubator Logo" 
-            width={120} 
-            height={40} 
-            className={`object-contain transition-all duration-500 ${!isHeaderDark ? 'brightness-0 invert' : ''}`}
-            priority
-          />
-        </Link>
-        <nav className={`hidden md:flex gap-8 text-xs font-bold tracking-widest uppercase transition-colors duration-500 ${isHeaderDark ? 'text-gray-500' : 'text-gray-400'}`}>
-          <a 
-            href="#candidature" 
-            onClick={(e) => { e.preventDefault(); const el = document.getElementById('candidature'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
-            className={`transition-colors cursor-pointer hover:text-orange-accent`}
-          >
-            Candidature
-          </a>
-          <span className="text-violet-main/50">•</span>
-          <a 
-            href="#vitrine" 
-            onClick={(e) => { e.preventDefault(); const el = document.getElementById('vitrine'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
-            className={`transition-colors cursor-pointer hover:text-orange-accent`}
-          >
-            Vitrine
-          </a>
-          <span className="text-violet-main/50">•</span>
-          <a 
-            href="#mentors" 
-            onClick={(e) => { e.preventDefault(); const el = document.getElementById('mentors'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
-            className={`transition-colors cursor-pointer hover:text-orange-accent`}
-          >
-            Mentors
-          </a>
-          <span className="text-violet-main/50">•</span>
-          <a 
-            href="#out-cubator" 
-            onClick={(e) => { e.preventDefault(); const el = document.getElementById('out-cubator'); if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' }); }}
-            className={`transition-colors cursor-pointer hover:text-orange-accent`}
-          >
-            Out-cubator
-          </a>
-        </nav>
-        <div className="flex items-center">
-          <Link 
-            href="/connect" 
-            className={`px-6 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase transition-all duration-500 border hover:bg-orange-accent hover:text-white hover:border-orange-accent ${
-              isHeaderDark 
-                ? 'border-gray-300 text-violet-dark' 
-                : 'border-white/50 text-white'
-            }`}
-          >
-            CONNECT
-          </Link>
-        </div>
-      </header>
-
       {/* 
         This wrapper is 300vh tall, creating 3 "screens" worth of scrolling distance.
       */}
@@ -146,11 +74,11 @@ export default function Home() {
 
           {/* Left Sidebar (Socials) */}
           <aside className="absolute left-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-12 text-[10px] font-bold tracking-widest text-gray-400 rotate-180" style={{ writingMode: 'vertical-rl' }}>
-            <Link href="#" className="hover:text-orange-accent transition-colors">LINKEDIN</Link>
+            <Link href="#" className="hover:text-white transition-colors">LINKEDIN</Link>
             <span className="text-violet-main/50">•</span>
-            <Link href="#" className="hover:text-orange-accent transition-colors">INSTAGRAM</Link>
+            <Link href="#" className="hover:text-white transition-colors">INSTAGRAM</Link>
             <span className="text-violet-main/50">•</span>
-            <Link href="#" className="hover:text-orange-accent transition-colors">TWITTER</Link>
+            <Link href="#" className="hover:text-white transition-colors">TWITTER</Link>
           </aside>
 
           {/* Right Sidebar (Scroll) */}
@@ -201,7 +129,7 @@ export default function Home() {
                 Mentorat, Deal Room et espaces startups conçus autour de vos idées, de vos équipes et de votre croissance.
               </p>
               <div className="flex gap-4">
-                <Link href="/contact" className="border border-white/50 px-6 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase text-white hover:bg-orange-accent hover:text-white hover:border-orange-accent transition-all w-fit">
+                <Link href="/contact" className="border border-white/50 px-6 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase text-white hover:bg-[#964594] hover:text-white hover:border-[#964594] transition-all w-fit">
                   NOUS CONTACTER
                 </Link>
               </div>
@@ -279,9 +207,9 @@ export default function Home() {
               </p>
               
               <div className="mt-auto flex gap-4 text-gray-400">
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">in</div>
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">tw</div>
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">✉</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">in</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">tw</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">✉</div>
               </div>
             </div>
 
@@ -298,9 +226,9 @@ export default function Home() {
               </p>
               
               <div className="mt-auto flex gap-4 text-gray-400">
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">in</div>
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">tw</div>
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">✉</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">in</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">tw</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">✉</div>
               </div>
             </div>
 
@@ -317,9 +245,9 @@ export default function Home() {
               </p>
               
               <div className="mt-auto flex gap-4 text-gray-400">
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">in</div>
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">tw</div>
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-orange-accent hover:border-orange-accent hover:text-white transition-colors cursor-pointer text-xs">✉</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">in</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">tw</div>
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">✉</div>
               </div>
             </div>
 
@@ -345,9 +273,9 @@ export default function Home() {
           </div>
 
           <div className="mt-16 text-center flex flex-col items-center">
-            <Link href="/mentors" className="px-8 py-4 rounded-md bg-[#47295C] text-white font-bold text-sm shadow-xl hover:bg-orange-accent hover:scale-105 transition-all flex items-center gap-3">
+            <Link href="/mentors" className="px-8 py-4 rounded-md bg-[#47295C] text-white font-bold text-sm shadow-xl hover:bg-[#964594] hover:scale-105 transition-all flex items-center gap-3">
               Découvrir tous les mentors
-              <div className="w-1.5 h-1.5 rounded-full bg-orange-accent"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
             </Link>
           </div>
         </div>
@@ -364,9 +292,6 @@ export default function Home() {
 
       {/* Out-Cubator Section */}
       <OutCubator />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

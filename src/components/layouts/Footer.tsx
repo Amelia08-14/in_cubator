@@ -51,7 +51,7 @@ export default function Footer() {
                 placeholder="Votre adresse email" 
                 className="bg-white/5 border border-white/10 rounded-l-md px-4 py-3 text-sm focus:outline-none focus:border-white/30 text-white w-64 placeholder:text-gray-600 transition-colors"
               />
-              <button className="bg-white text-[#47295C] font-bold text-xs uppercase tracking-widest px-6 py-3.5 rounded-r-md hover:bg-orange-accent hover:text-white transition-colors">
+              <button className="bg-white text-[#47295C] font-bold text-xs uppercase tracking-widest px-6 py-3.5 rounded-r-md hover:bg-[#964594] hover:text-white transition-colors">
                 S'inscrire
               </button>
             </div>
@@ -62,25 +62,25 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-xs tracking-widest text-gray-500 mb-2 uppercase">Programme</h4>
-            <Link href="/candidature" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Candidature</Link>
-            <Link href="/vitrine" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Vitrine Startups</Link>
-            <Link href="/mentors" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Nos Mentors</Link>
-            <Link href="/out-cubator" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Out-Cubator</Link>
+            <Link href="/candidature" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Candidature</Link>
+            <Link href="/vitrine" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Vitrine Startups</Link>
+            <Link href="/mentors" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Nos Mentors</Link>
+            <Link href="/out-cubator" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Out-Cubator</Link>
           </div>
           
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-xs tracking-widest text-gray-500 mb-2 uppercase">Ressources</h4>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Documentation</Link>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Blog</Link>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Études de cas</Link>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">FAQ</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Documentation</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Blog</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Études de cas</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">FAQ</Link>
           </div>
 
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-xs tracking-widest text-gray-500 mb-2 uppercase">Légal</h4>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Mentions Légales</Link>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">Confidentialité</Link>
-            <Link href="#" className="text-gray-300 hover:text-orange-accent text-sm transition-colors">CGU</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Mentions Légales</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">Confidentialité</Link>
+            <Link href="#" className="text-gray-300 hover:text-[#964594] text-sm transition-colors">CGU</Link>
           </div>
 
           <div className="flex flex-col gap-4">
