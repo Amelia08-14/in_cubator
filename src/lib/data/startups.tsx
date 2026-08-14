@@ -107,13 +107,13 @@ export const startupsData: StartupProfile[] = [
       { id: "a3", title: "Top 10 - African HealthTech Startups", description: "Classement 2023" }
     ],
     funding: {
-      raisedAmount: "350K €",
+      raisedAmount: "350K DZD",
       round: "Seed Round",
       year: "2024",
       investors: "InnovInvest, SANAD Fund, Business Angels Network",
       nextRound: {
         type: "Pre-Series A",
-        goal: "1.5M €",
+        goal: "1.5M DZD",
         date: "T1 2025"
       },
       progressPercent: 65

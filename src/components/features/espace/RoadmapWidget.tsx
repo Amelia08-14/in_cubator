@@ -20,100 +20,26 @@ const mockColumns: Column[] = [
   {
     id: "todo",
     title: "À faire",
-    count: 3,
-    items: [
-      {
-        id: "1",
-        title: "Étude de marché",
-        description: "Analyser le marché cible et la concurrence.",
-        tag: "Stratégie",
-        tagColor: "text-pink-600 bg-pink-50",
-      },
-      {
-        id: "2",
-        title: "Définir le MVP",
-        description: "Lister les fonctionnalités clés pour la V1.",
-        tag: "Produit",
-        tagColor: "text-blue-600 bg-blue-50",
-      },
-      {
-        id: "3",
-        title: "Plan marketing",
-        description: "Élaborer la stratégie d'acquisition.",
-        tag: "Marketing",
-        tagColor: "text-purple-600 bg-purple-50",
-      }
-    ]
+    count: 0,
+    items: []
   },
   {
     id: "inprogress",
     title: "En cours",
-    count: 2,
-    items: [
-      {
-        id: "4",
-        title: "Développement MVP",
-        description: "Développer les fonctionnalités clés du produit.",
-        tag: "Produit",
-        tagColor: "text-orange-600 bg-orange-50",
-      },
-      {
-        id: "5",
-        title: "Constitution de l'équipe",
-        description: "Recruter les premiers membres clés.",
-        tag: "Opérations",
-        tagColor: "text-blue-600 bg-blue-50",
-      }
-    ]
+    count: 0,
+    items: []
   },
   {
     id: "review",
     title: "En revue",
-    count: 2,
-    items: [
-      {
-        id: "6",
-        title: "Modèle économique",
-        description: "Valider les hypothèses et le modèle de revenus.",
-        tag: "Stratégie",
-        tagColor: "text-pink-600 bg-pink-50",
-      },
-      {
-        id: "7",
-        title: "Design review",
-        description: "Relecture des écrans et parcours utilisateur.",
-        tag: "Produit",
-        tagColor: "text-blue-600 bg-blue-50",
-      }
-    ]
+    count: 0,
+    items: []
   },
   {
     id: "done",
     title: "Terminé",
-    count: 3,
-    items: [
-      {
-        id: "8",
-        title: "Vision & Mission",
-        description: "Définir la vision, la mission et les valeurs.",
-        tag: "Stratégie",
-        tagColor: "text-pink-600 bg-pink-50",
-      },
-      {
-        id: "9",
-        title: "Business plan initial",
-        description: "Rédiger la première version du business plan.",
-        tag: "Stratégie",
-        tagColor: "text-pink-600 bg-pink-50",
-      },
-      {
-        id: "10",
-        title: "Choix du stack tech",
-        description: "Sélectionner les technologies.",
-        tag: "Produit",
-        tagColor: "text-teal-600 bg-teal-50",
-      }
-    ]
+    count: 0,
+    items: []
   }
 ];
 

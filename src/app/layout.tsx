@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${robotoSlab.variable} h-full antialiased`}
+      className={`${robotoSlab.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="flex flex-col font-sans">
         <Providers>
           <LenisProvider>
             {children}

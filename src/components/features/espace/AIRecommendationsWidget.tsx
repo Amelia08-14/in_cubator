@@ -10,32 +10,7 @@ interface Recommendation {
   reason: string;
 }
 
-const mockRecommendations: Recommendation[] = [
-  {
-    id: "1",
-    name: "Karim Belkacem",
-    type: "Mentor",
-    typeColor: "text-purple-600 font-bold",
-    image: "https://i.pravatar.cc/150?img=11",
-    reason: "Recommandé parce que vous avez besoin d'expertise en stratégie de mise sur le marché (B2B SaaS)."
-  },
-  {
-    id: "2",
-    name: "Lina Merzouk",
-    type: "Investisseur",
-    typeColor: "text-[#47295C] font-bold",
-    image: "https://i.pravatar.cc/150?img=5",
-    reason: "Recommandé parce qu'elle a investi dans 3 startups de votre secteur au stade Seed."
-  },
-  {
-    id: "3",
-    name: "UM6P Ventures",
-    type: "Partenaire",
-    typeColor: "text-blue-600 font-bold",
-    image: "https://i.pravatar.cc/150?img=3",
-    reason: "Recommandé car votre solution peut répondre à leurs enjeux en innovation et impact."
-  }
-];
+const mockRecommendations: Recommendation[] = [];
 
 export default function AIRecommendationsWidget() {
   return (
@@ -45,9 +20,15 @@ export default function AIRecommendationsWidget() {
         <h2 className="text-lg font-bold text-[#47295C]">C. Recommandations IA</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
-        {mockRecommendations.map(rec => (
-          <div key={rec.id} className="border border-gray-100 rounded-xl p-5 flex flex-col hover:border-[#964594]/30 hover:shadow-md transition-all group bg-white">
+      {mockRecommendations.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+          <p className="text-sm text-gray-500">Aucune recommandation disponible pour le moment.</p>
+          <p className="text-xs text-gray-400 mt-1">L'IA analysera votre profil pour vous proposer des mentors et partenaires pertinents.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+          {mockRecommendations.map(rec => (
+            <div key={rec.id} className="border border-gray-100 rounded-xl p-5 flex flex-col hover:border-[#964594]/30 hover:shadow-md transition-all group bg-white">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <img src={rec.image} alt={rec.name} className="w-10 h-10 rounded-full object-cover border border-gray-100" />
@@ -71,6 +52,7 @@ export default function AIRecommendationsWidget() {
           </div>
         ))}
       </div>
+      )}
 
       <div className="mt-6 pt-4 border-t border-gray-100">
         <button className="text-xs font-bold text-[#964594] hover:text-[#47295C] transition-colors flex items-center gap-1 group">

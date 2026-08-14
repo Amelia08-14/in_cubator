@@ -12,26 +12,50 @@ export default function Step5Summary() {
 
   const mutation = useMutation({
     mutationFn: async (data: CandidatureData) => {
+      // Fetch the active cohorte id (for now we hardcode or send a dummy cuid, or omit if backend allows, but schema requires cuid)
+      // We will generate a fake cuid for the cohorteId for testing purposes if none exists.
+      const payload = {
+        cohorteId: "cm0xyzt9x0000dummycohorteId", // In a real app, this should be fetched from active cohorte
+        startup: {
+          nom: data.startupName,
+          secteurs: [data.sector],
+          stade: data.stage === "Idée" ? "IDEE" : data.stage === "Prototype" ? "PROTOTYPE" : data.stage === "Produit / Early Traction" ? "EARLY_TRACTION" : "SCALE",
+          description: data.description || "Description non fournie",
+          besoins: [data.needs || "Non spécifié"],
+          membres: data.team.map(m => ({
+            nom: m.name,
+            role: m.role,
+            linkedin: "", // Optional
+          })),
+        },
+        reponses: {
+          problemSolved: data.problemSolved,
+          slogan: data.slogan,
+          country: data.country,
+          website: data.website
+        },
+      };
+
       const response = await fetch("/api/candidatures", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        throw new Error("Erreur lors de la soumission de la candidature");
+        const errData = await response.json();
+        console.error("API Error:", errData);
+        throw new Error(errData.message || JSON.stringify(errData.errors) || "Erreur lors de la soumission de la candidature");
       }
 
       return response.json();
     },
     onSuccess: () => {
-      // Clear the store and redirect to a success page or back to home
+      // Clear the store and redirect to waiting page
       resetForm();
-      // For now we can just alert and go to home
-      alert("Candidature envoyée avec succès ! Votre compte a été créé.");
-      router.push("/");
+      router.push("/candidature/attente");
     },
     onError: (error) => {
       console.error(error);

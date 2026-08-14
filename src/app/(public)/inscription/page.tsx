@@ -3,11 +3,66 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, User, Building2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Mail, Lock, Eye, EyeOff, User, Building2, Loader2, AlertCircle } from "lucide-react";
 
 export default function InscriptionPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [accountType, setAccountType] = useState<"particulier" | "entreprise">("particulier");
+  
+  const [formData, setFormData] = useState({
+    fullName: "",
+    companyName: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, accountType }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Une erreur s'est produite lors de l'inscription.");
+      }
+
+      // Auto-login after successful registration
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (result?.error) {
+        throw new Error("Compte créé mais échec de la connexion automatique.");
+      }
+
+      router.push("/espace");
+      router.refresh();
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="min-h-screen bg-[#F9F7FA] text-[#47295C] relative overflow-x-hidden pt-32 pb-24 font-sans" data-theme="light">
@@ -18,7 +73,6 @@ export default function InscriptionPage() {
           backgroundSize: '24px 24px'
       }}></div>
       
-      {/* Large faint background swirls */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] pointer-events-none opacity-20 z-0 hidden lg:block overflow-hidden">
         <div className="absolute top-0 right-[-10%] w-[800px] h-[800px] rounded-full border-[1px] border-[#964594]/20"></div>
         <div className="absolute top-[10%] right-[10%] w-[600px] h-[600px] rounded-full border-[1px] border-[#964594]/20"></div>
@@ -59,6 +113,7 @@ export default function InscriptionPage() {
           <div className="flex p-1 bg-gray-50 rounded-xl mb-8 border border-gray-100">
             <button
               onClick={() => setAccountType("particulier")}
+              type="button"
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${
                 accountType === "particulier" 
                   ? "bg-white text-[#47295C] shadow-sm border border-gray-100" 
@@ -70,6 +125,7 @@ export default function InscriptionPage() {
             </button>
             <button
               onClick={() => setAccountType("entreprise")}
+              type="button"
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${
                 accountType === "entreprise" 
                   ? "bg-white text-[#47295C] shadow-sm border border-gray-100" 
@@ -81,7 +137,14 @@ export default function InscriptionPage() {
             </button>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-start gap-3">
+              <AlertCircle size={18} className="shrink-0 mt-0.5" />
+              <p className="font-medium">{error}</p>
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
             
             {/* Dynamic Fields based on Account Type */}
             {accountType === "entreprise" && (
@@ -93,6 +156,10 @@ export default function InscriptionPage() {
                   </div>
                   <input
                     type="text"
+                    name="companyName"
+                    required={accountType === "entreprise"}
+                    value={formData.companyName}
+                    onChange={handleInputChange}
                     className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#964594]/50 focus:border-[#964594] transition-all text-gray-900 placeholder:text-gray-400"
                     placeholder="Votre entreprise"
                   />
@@ -108,6 +175,10 @@ export default function InscriptionPage() {
                 </div>
                 <input
                   type="text"
+                  name="fullName"
+                  required
+                  value={formData.fullName}
+                  onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#964594]/50 focus:border-[#964594] transition-all text-gray-900 placeholder:text-gray-400"
                   placeholder="Jean Dupont"
                 />
@@ -123,6 +194,10 @@ export default function InscriptionPage() {
                 </div>
                 <input
                   type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#964594]/50 focus:border-[#964594] transition-all text-gray-900 placeholder:text-gray-400"
                   placeholder="exemple@email.com"
                 />
@@ -138,6 +213,10 @@ export default function InscriptionPage() {
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
                   className="w-full pl-10 pr-12 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#964594]/50 focus:border-[#964594] transition-all text-gray-900 placeholder:text-gray-400"
                   placeholder="Votre mot de passe"
                 />
@@ -156,6 +235,7 @@ export default function InscriptionPage() {
               <input
                 type="checkbox"
                 id="terms"
+                required
                 className="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#47295C] focus:ring-[#964594]"
               />
               <label htmlFor="terms" className="text-xs text-gray-600 leading-relaxed cursor-pointer">
@@ -166,9 +246,17 @@ export default function InscriptionPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3.5 mt-2 bg-[#47295C] hover:bg-[#964594] text-white rounded-xl font-bold text-sm tracking-wide transition-colors shadow-sm"
+              disabled={loading}
+              className="w-full py-3.5 mt-2 flex items-center justify-center bg-[#47295C] hover:bg-[#964594] text-white rounded-xl font-bold text-sm tracking-wide transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Créer mon compte
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin mr-2" />
+                  Création en cours...
+                </>
+              ) : (
+                "Créer mon compte"
+              )}
             </button>
           </form>
 

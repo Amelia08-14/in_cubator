@@ -3,10 +3,56 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function ConnexionPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        loginType: "user",
+        redirect: false,
+      });
+
+      if (res?.error) {
+        setError("Identifiants incorrects. Veuillez réessayer.");
+        setLoading(false);
+        return;
+      }
+
+      // Fetch session to get role for redirect
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+      const role = session?.user?.role;
+
+      const dashboardMap: Record<string, string> = {
+        PORTEUR_STARTUP: "/espace",
+        MENTOR_EXPERT: "/espace-mentor",
+        INVESTISSEUR: "/espace-investisseur",
+      };
+
+      const destination = dashboardMap[role] || "/connexion";
+      router.push(destination);
+      router.refresh();
+    } catch {
+      setError("Une erreur est survenue. Veuillez réessayer.");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F9F7FA] text-[#47295C] relative overflow-x-hidden pt-32 pb-24 font-sans" data-theme="light">
@@ -54,7 +100,13 @@ export default function ConnexionPage() {
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium text-center">
+              {error}
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
             
             {/* Email Field */}
             <div className="space-y-1.5">
@@ -65,6 +117,9 @@ export default function ConnexionPage() {
                 </div>
                 <input
                   type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#964594]/50 focus:border-[#964594] transition-all text-gray-900 placeholder:text-gray-400"
                   placeholder="exemple@email.com"
                 />
@@ -80,6 +135,9 @@ export default function ConnexionPage() {
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-12 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#964594]/50 focus:border-[#964594] transition-all text-gray-900 placeholder:text-gray-400"
                   placeholder="Votre mot de passe"
                 />
@@ -113,25 +171,17 @@ export default function ConnexionPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#47295C] hover:bg-[#964594] text-white rounded-xl font-bold text-sm tracking-wide transition-colors shadow-sm"
+              disabled={loading}
+              className="w-full py-3.5 bg-[#47295C] hover:bg-[#964594] text-white rounded-xl font-bold text-sm tracking-wide transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Se connecter
-            </button>
-
-            {/* Divider */}
-            <div className="flex items-center py-2">
-              <div className="flex-grow border-t border-gray-100"></div>
-              <span className="flex-shrink-0 mx-4 text-gray-400 text-xs">ou</span>
-              <div className="flex-grow border-t border-gray-100"></div>
-            </div>
-
-            {/* Magic Link Button */}
-            <button
-              type="button"
-              className="w-full py-3.5 bg-white border border-[#47295C]/20 hover:border-[#47295C] hover:bg-gray-50 text-[#47295C] rounded-xl font-bold text-sm tracking-wide transition-all flex items-center justify-center gap-2"
-            >
-              <ShieldCheck size={18} className="text-[#964594]" />
-              Se connecter avec un lien magique
+              {loading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Connexion en cours...
+                </>
+              ) : (
+                "Se connecter"
+              )}
             </button>
 
           </form>

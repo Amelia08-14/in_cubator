@@ -4,7 +4,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, FolderOpen, BookOpen } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { LayoutDashboard, Users, FolderOpen, BookOpen, LogOut } from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -12,9 +13,7 @@ export default function Sidebar() {
   const navItems = [
     { name: "Tableau de bord", href: "/espace", icon: LayoutDashboard },
     { name: "Mentors", href: "/espace/mentors", icon: Users },
-    { name: "Documents", href: "/espace/documents", icon: FolderOpen },
     { name: "Deal Room", href: "/espace/deal-room", icon: FolderOpen },
-    { name: "Bibliothèque", href: "/espace/bibliotheque", icon: BookOpen },
   ];
 
   return (
@@ -47,14 +46,23 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom Profile Section */}
-      <div className="p-4 border-t border-gray-100">
+      <div className="p-4 border-t border-gray-100 flex flex-col gap-2">
+        {/* Logout */}
+        <button
+          onClick={() => signOut({ callbackUrl: "/connexion" })}
+          className="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all text-left"
+        >
+          <LogOut size={18} />
+          Déconnexion
+        </button>
+
         <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 shadow-sm bg-gray-50">
           <div className="w-10 h-10 rounded-lg bg-[#47295C] text-white flex items-center justify-center font-bold text-lg">
-            N
+            S
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-bold text-[#47295C] text-sm truncate">NovaTech</h4>
-            <p className="text-xs text-gray-500">Startup</p>
+            <h4 className="font-bold text-[#47295C] text-sm truncate">Startup</h4>
+            <p className="text-xs text-gray-500">Porteur de projet</p>
           </div>
         </div>
       </div>

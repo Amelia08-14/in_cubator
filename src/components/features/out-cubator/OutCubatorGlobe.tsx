@@ -34,11 +34,11 @@ export default function OutCubatorGlobe() {
         { location: [-23.55, -46.63], size: 0.05 }, // Sao Paulo
         { location: [35.68, 139.69], size: 0.06 }, // Tokyo
       ],
-      onRender: (state) => {
+      onRender: (state: any) => {
         state.phi = phi;
         phi += 0.003;
       },
-    });
+    } as any);
 
     return () => {
       globe.destroy();

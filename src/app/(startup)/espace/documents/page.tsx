@@ -6,100 +6,10 @@ import { FileText, Folder, Plus, Upload, ChevronRight, Edit3, FolderInput, Users
 import Image from "next/image";
 
 // Mock Data for Folders
-const mockFolders = [
-  { id: 1, name: "Notes de Réunion", desc: "Notes et synthèses des réunions internes et avec les mentors.", count: 12 },
-  { id: 2, name: "Drafts Pitch Deck", desc: "Versions en cours de nos présentations avant finalisation.", count: 7 },
-  { id: 3, name: "Recherche Marché", desc: "Analyses concurrentielles, études, sondages et rapports sectoriels.", count: 15 },
-  { id: 4, name: "Rapports Hebdomadaires", desc: "Rapports de progression et mises à jour hebdomadaires.", count: 9 },
-];
+const mockFolders: any[] = [];
 
 // Mock Data for Recent Files
-const mockFiles = [
-  { 
-    id: 1, 
-    name: "Nexora_PitchDraft_V1.pdf", 
-    size: "2.4 MB",
-    type: "Document PDF",
-    ext: "pdf",
-    modifiedDate: "12/05/2024",
-    modifiedTime: "14:32",
-    authorName: "Amine S.",
-    authorInitials: "AS",
-    authorColor: "bg-[#47295C]"
-  },
-  { 
-    id: 2, 
-    name: "CompteRendu_Reunion_Mentor_April.docx", 
-    size: "156 KB",
-    type: "Document Word",
-    ext: "docx",
-    modifiedDate: "12/05/2024",
-    modifiedTime: "11:15",
-    authorName: "Amal B.",
-    authorInitials: "AB",
-    authorColor: "bg-[#D44835]"
-  },
-  { 
-    id: 3, 
-    name: "Analyse_Concurrence_MedTech.xlsx", 
-    size: "342 KB",
-    type: "Feuille de calcul Excel",
-    ext: "xlsx",
-    modifiedDate: "11/05/2024",
-    modifiedTime: "18:07",
-    authorName: "Doria K.",
-    authorInitials: "DK",
-    authorColor: "bg-[#73B866]"
-  },
-  { 
-    id: 4, 
-    name: "Etude_Marche_Sante_NA.pdf", 
-    size: "3.1 MB",
-    type: "Document PDF",
-    ext: "pdf",
-    modifiedDate: "11/05/2024",
-    modifiedTime: "09:45",
-    authorName: "Amine S.",
-    authorInitials: "AS",
-    authorColor: "bg-[#47295C]"
-  },
-  { 
-    id: 5, 
-    name: "Plan_Action_Semaine_19.docx", 
-    size: "98 KB",
-    type: "Document Word",
-    ext: "docx",
-    modifiedDate: "10/05/2024",
-    modifiedTime: "17:20",
-    authorName: "Amal B.",
-    authorInitials: "AB",
-    authorColor: "bg-[#D44835]"
-  },
-  { 
-    id: 6, 
-    name: "Prototype_Description_V2.pdf", 
-    size: "1.8 MB",
-    type: "Document PDF",
-    ext: "pdf",
-    modifiedDate: "10/05/2024",
-    modifiedTime: "12:05",
-    authorName: "Doria K.",
-    authorInitials: "DK",
-    authorColor: "bg-[#73B866]"
-  },
-  { 
-    id: 7, 
-    name: "Survey_Results_RawData.xlsx", 
-    size: "512 KB",
-    type: "Feuille de calcul Excel",
-    ext: "xlsx",
-    modifiedDate: "09/05/2024",
-    modifiedTime: "21:33",
-    authorName: "Amine S.",
-    authorInitials: "AS",
-    authorColor: "bg-[#47295C]"
-  },
-];
+const mockFiles: any[] = [];
 
 export default function DocumentsPage() {
   
@@ -114,7 +24,6 @@ export default function DocumentsPage() {
 
   return (
     <div className="flex flex-col min-h-screen pb-12 bg-[#f8f9fa] relative">
-      <Header />
       
       <div className="flex-1 p-6 lg:p-8">
         <div className="max-w-[1600px] mx-auto">

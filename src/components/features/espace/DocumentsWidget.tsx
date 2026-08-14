@@ -10,46 +10,42 @@ interface Document {
   date: string;
   type: "pdf" | "excel" | "word";
   visibleToInvestors: boolean;
+  startupId: string;
+  url: string;
 }
 
-const mockDocuments: Document[] = [
-  {
-    id: "1",
-    name: "Pitch Deck 2026.pdf",
-    date: "22 mai 2026",
-    type: "pdf",
-    visibleToInvestors: true
-  },
-  {
-    id: "2",
-    name: "Business Plan.xlsx",
-    date: "20 mai 2026",
-    type: "excel",
-    visibleToInvestors: true
-  },
-  {
-    id: "3",
-    name: "Étude de marché.docx",
-    date: "18 mai 2026",
-    type: "word",
-    visibleToInvestors: false
-  },
-  {
-    id: "4",
-    name: "Data Room Overview.pdf",
-    date: "15 mai 2026",
-    type: "pdf",
-    visibleToInvestors: true
-  }
-];
+interface Props {
+  initialDocuments: Document[];
+}
 
-export default function DocumentsWidget() {
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
+export default function DocumentsWidget({ initialDocuments }: Props) {
+  const [documents, setDocuments] = useState<Document[]>(initialDocuments);
 
-  const toggleVisibility = (id: string) => {
+  const toggleVisibility = async (id: string) => {
+    // Optimistic update
     setDocuments(documents.map(d => 
       d.id === id ? { ...d, visibleToInvestors: !d.visibleToInvestors } : d
     ));
+
+    try {
+      const doc = documents.find(d => d.id === id);
+      const res = await fetch(`/api/startups/${doc?.startupId}/documents/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibleInvestisseurs: !doc?.visibleToInvestors })
+      });
+      if (!res.ok) {
+        // Revert on error
+        setDocuments(documents.map(d => 
+          d.id === id ? { ...d, visibleToInvestors: d.visibleToInvestors } : d
+        ));
+      }
+    } catch (e) {
+      // Revert on error
+      setDocuments(documents.map(d => 
+        d.id === id ? { ...d, visibleToInvestors: d.visibleToInvestors } : d
+      ));
+    }
   };
 
   const getIconColor = (type: string) => {
@@ -82,9 +78,14 @@ export default function DocumentsWidget() {
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-[10px] font-bold ${getIconColor(doc.type)} shrink-0`}>
                   {doc.type === "pdf" ? "PDF" : doc.type === "excel" ? "XLS" : "DOC"}
                 </div>
-                <span className="text-sm font-medium text-gray-700 truncate group-hover:text-[#964594] transition-colors cursor-pointer">
+                <a 
+                  href={doc.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-gray-700 truncate group-hover:text-[#964594] hover:underline transition-colors cursor-pointer"
+                >
                   {doc.name}
-                </span>
+                </a>
               </div>
               
               <div className="col-span-3">

@@ -5,88 +5,7 @@ import Header from "@/components/features/espace/Header";
 import { BookOpen, Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import ResourceCard, { ResourceItem } from "@/components/features/espace/bibliotheque/ResourceCard";
 
-const mockResources: ResourceItem[] = [
-  {
-    id: "1",
-    title: "Modèle de Business Plan",
-    description: "Modèle complet de business plan adapté aux startups en santé.",
-    category: "Finance",
-    categoryClass: "text-purple-600 bg-purple-50",
-    fileType: "pdf",
-    size: "1.2 MB",
-    date: "12/05/2024"
-  },
-  {
-    id: "2",
-    title: "Business Model Canvas",
-    description: "Template du Business Model Canvas pour structurer votre modèle d'affaires.",
-    category: "Stratégie",
-    categoryClass: "text-blue-600 bg-blue-50",
-    fileType: "docx",
-    size: "450 KB",
-    date: "10/05/2024"
-  },
-  {
-    id: "3",
-    title: "Modèle de Pitch Deck",
-    description: "Présentation prête à l'emploi pour convaincre vos investisseurs.",
-    category: "Pitch",
-    categoryClass: "text-orange-600 bg-orange-50",
-    fileType: "pptx",
-    size: "2.1 MB",
-    date: "08/05/2024"
-  },
-  {
-    id: "4",
-    title: "Prévisions Financières",
-    description: "Modèle Excel pour vos prévisions financières et analyse de rentabilité.",
-    category: "Finance",
-    categoryClass: "text-green-600 bg-green-50",
-    fileType: "xlsx",
-    size: "850 KB",
-    date: "05/05/2024"
-  },
-  {
-    id: "5",
-    title: "Étude de Marché – Santé",
-    description: "Guide pour réaliser une étude de marché dans le secteur de la santé.",
-    category: "Market",
-    categoryClass: "text-pink-600 bg-pink-50",
-    fileType: "pdf",
-    size: "1.8 MB",
-    date: "02/05/2024"
-  },
-  {
-    id: "6",
-    title: "Contrat de Confidentialité (NDA)",
-    description: "Modèle de NDA standard pour protéger vos informations sensibles.",
-    category: "Juridique",
-    categoryClass: "text-gray-600 bg-gray-100",
-    fileType: "docx",
-    size: "300 KB",
-    date: "30/04/2024"
-  },
-  {
-    id: "7",
-    title: "Guide Réglementaire – Pharma",
-    description: "Guide des exigences réglementaires pour les produits pharmaceutiques en Algérie.",
-    category: "Juridique",
-    categoryClass: "text-gray-600 bg-gray-100",
-    fileType: "pdf",
-    size: "2.4 MB",
-    date: "28/04/2024"
-  },
-  {
-    id: "8",
-    title: "Modèle de Contrat de Travail",
-    description: "Modèle de contrat de travail adapté aux startups.",
-    category: "RH",
-    categoryClass: "text-blue-600 bg-blue-50",
-    fileType: "docx",
-    size: "220 KB",
-    date: "25/04/2024"
-  }
-];
+const mockResources: ResourceItem[] = [];
 
 const filters = ["Tous", "Finance", "Juridique / Legal", "Marketing", "Tech", "Ressources Humaines", "Opérations"];
 
@@ -107,7 +26,6 @@ export default function BibliothequePage() {
 
   return (
     <div className="flex flex-col min-h-screen pb-12 bg-[#f8f9fa] relative">
-      <Header />
       
       <div className="flex-1 p-6 lg:p-8">
         <div className="max-w-[1600px] mx-auto">

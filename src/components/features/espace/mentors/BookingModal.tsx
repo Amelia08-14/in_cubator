@@ -1,23 +1,75 @@
 "use client";
 
-import React, { useState } from "react";
-import { X, ChevronLeft, ChevronRight, Info } from "lucide-react";
-import { Mentor } from "@/lib/data/mentors";
+import React, { useState, useEffect } from "react";
+import { X, ChevronLeft, ChevronRight, Info, Loader2 } from "lucide-react";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mentor: Mentor | null;
+  mentor: any | null;
+  startupId: string;
 }
 
-export default function BookingModal({ isOpen, onClose, mentor }: BookingModalProps) {
-  const [selectedDate, setSelectedDate] = useState<number | null>(17); // Default to 17 as per mockup
-  const [selectedSlot, setSelectedSlot] = useState<string | null>("10:30"); // Default as per mockup
+export default function BookingModal({ isOpen, onClose, mentor, startupId }: BookingModalProps) {
+  const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [isBooking, setIsBooking] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedDateStr(null);
+      setSelectedSlotId(null);
+      setErrorMsg("");
+    }
+  }, [isOpen]);
 
   if (!isOpen || !mentor) return null;
 
-  const dates = Array.from({ length: 30 }, (_, i) => i + 1);
-  const timeSlots = ["09:00", "10:30", "12:00", "14:00", "15:30", "17:00"];
+  // Group disponibilites by date string YYYY-MM-DD
+  const disponibilitesByDate = mentor.disponibilites?.reduce((acc: any, d: any) => {
+    const dateStr = d.dateDebut.split("T")[0];
+    if (!acc[dateStr]) acc[dateStr] = [];
+    acc[dateStr].push(d);
+    return acc;
+  }, {}) || {};
+
+  const availableDates = Object.keys(disponibilitesByDate).sort();
+  const activeDate = selectedDateStr || (availableDates.length > 0 ? availableDates[0] : null);
+  const activeSlots = activeDate ? disponibilitesByDate[activeDate] : [];
+
+  const handleBook = async () => {
+    if (!selectedSlotId) return;
+    setIsBooking(true);
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/meetings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "MENTORAT",
+          startupId: startupId,
+          mentorId: mentor.id,
+          disponibiliteId: selectedSlotId
+        })
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setErrorMsg(json.error?.message || "Erreur lors de la réservation.");
+      } else {
+        alert("Réservation confirmée ! Vous recevrez un email prochainement.");
+        onClose();
+        // Ideally we would refresh the page to remove the slot from the list
+        window.location.reload();
+      }
+    } catch (err) {
+      setErrorMsg("Une erreur est survenue.");
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
@@ -52,7 +104,7 @@ export default function BookingModal({ isOpen, onClose, mentor }: BookingModalPr
               <h3 className="font-bold text-lg text-[#47295C]">{mentor.name}</h3>
               <p className="text-xs text-gray-500 mb-2">{mentor.role}</p>
               <div className="flex flex-wrap gap-2">
-                {mentor.tags.map((tag, i) => (
+                {mentor.tags?.map((tag: string, i: number) => (
                   <span key={i} className="px-2 py-0.5 rounded border border-[#964594]/30 text-[#47295C] text-[10px] font-bold">
                     {tag}
                   </span>
@@ -61,99 +113,80 @@ export default function BookingModal({ isOpen, onClose, mentor }: BookingModalPr
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            
-            {/* Left Column: Calendar */}
-            <div>
-              <h4 className="font-bold text-sm text-[#47295C] mb-4">1. Choisissez une date</h4>
+          {availableDates.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-500">Ce mentor n'a aucune disponibilité pour le moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               
-              <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-                {/* Calendar Header */}
-                <div className="flex justify-between items-center mb-6">
-                  <button className="p-1 hover:bg-gray-100 rounded text-gray-500"><ChevronLeft size={16}/></button>
-                  <span className="font-bold text-sm text-[#47295C]">Juin 2026</span>
-                  <button className="p-1 hover:bg-gray-100 rounded text-gray-500"><ChevronRight size={16}/></button>
-                </div>
-                
-                {/* Calendar Grid */}
-                <div className="grid grid-cols-7 gap-y-4 gap-x-2 text-center text-xs">
-                  {/* Days */}
-                  {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
-                    <div key={day} className="text-gray-400 font-bold mb-2">{day}</div>
-                  ))}
-                  
-                  {/* Dates */}
-                  {dates.map(date => {
-                    const isSelected = date === selectedDate;
-                    // Mocking some dots for availability
-                    const hasAvailability = date % 3 === 0 || date === 17 || date === 24; 
-                    
+              {/* Left Column: Calendar (simplified for MVP just showing available dates) */}
+              <div>
+                <h4 className="font-bold text-sm text-[#47295C] mb-4">1. Choisissez une date</h4>
+                <div className="space-y-2">
+                  {availableDates.map(dateStr => {
+                    const d = new Date(dateStr);
+                    const label = d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+                    const isSelected = activeDate === dateStr;
                     return (
                       <button
-                        key={date}
-                        onClick={() => setSelectedDate(date)}
-                        className={`relative w-8 h-8 mx-auto rounded-full flex items-center justify-center text-sm transition-all ${
-                          isSelected 
-                            ? 'bg-[#47295C] text-white font-bold shadow-md' 
-                            : 'text-gray-700 hover:bg-gray-100'
+                        key={dateStr}
+                        onClick={() => {
+                          setSelectedDateStr(dateStr);
+                          setSelectedSlotId(null);
+                        }}
+                        className={`w-full text-left px-4 py-3 rounded-lg font-bold text-sm transition-all border ${
+                          isSelected ? "bg-[#47295C] text-white border-[#47295C] shadow-sm" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                         }`}
                       >
-                        {date}
-                        {hasAvailability && !isSelected && (
-                          <div className="absolute bottom-1 w-1 h-1 rounded-full bg-[#964594]"></div>
-                        )}
+                        {label.charAt(0).toUpperCase() + label.slice(1)}
                       </button>
                     )
                   })}
                 </div>
               </div>
-            </div>
 
-            {/* Right Column: Time Slots & Details */}
-            <div className="space-y-8">
-              
-              <div>
-                <h4 className="font-bold text-sm text-[#47295C] mb-4 flex justify-between">
-                  2. Choisissez un créneau
-                  <span className="text-xs font-normal text-gray-400">Heure locale (GMT+1)</span>
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {timeSlots.map(time => (
-                    <button
-                      key={time}
-                      onClick={() => setSelectedSlot(time)}
-                      className={`py-2.5 rounded-lg text-sm font-bold border transition-all ${
-                        selectedSlot === time 
-                          ? 'bg-[#47295C] text-white border-[#47295C] shadow-md' 
-                          : 'bg-white text-gray-700 border-gray-200 hover:border-[#964594]/50 hover:bg-[#964594]/5'
-                      }`}
-                    >
-                      {time}
-                    </button>
-                  ))}
+              {/* Right Column: Time Slots & Details */}
+              <div className="space-y-8">
+                
+                <div>
+                  <h4 className="font-bold text-sm text-[#47295C] mb-4 flex justify-between">
+                    2. Choisissez un créneau
+                  </h4>
+                  <div className="flex flex-col gap-3">
+                    {activeSlots.map((slot: any) => {
+                      const startTimeStr = new Date(slot.dateDebut).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                      const endTimeStr = new Date(slot.dateFin).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                      return (
+                        <button
+                          key={slot.id}
+                          onClick={() => setSelectedSlotId(slot.id)}
+                          className={`flex items-center justify-between p-3 rounded-lg text-sm font-bold border transition-all ${
+                            selectedSlotId === slot.id 
+                              ? 'bg-[#47295C] text-white border-[#47295C] shadow-md' 
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#964594]/50 hover:bg-[#964594]/5'
+                          }`}
+                        >
+                          <span>{startTimeStr} - {endTimeStr}</span>
+                          <span className={`text-xs px-2 py-1 rounded-md ${
+                            selectedSlotId === slot.id ? 'bg-white/20' : 'bg-gray-100 text-gray-500'
+                          }`}>
+                            {slot.format === "Visioconférence" ? "Visio" : "Présentiel"}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <h4 className="font-bold text-sm text-[#47295C] mb-3">3. Durée de la session</h4>
-                <select className="w-full border border-gray-200 rounded-lg p-3 text-sm text-gray-700 focus:outline-none focus:border-[#964594]">
-                  <option>30 minutes</option>
-                  <option>45 minutes</option>
-                  <option>60 minutes</option>
-                </select>
+                {errorMsg && (
+                  <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm font-medium">
+                    {errorMsg}
+                  </div>
+                )}
               </div>
-
-              <div>
-                <h4 className="font-bold text-sm text-[#47295C] mb-3">4. Objet de l'échange (optionnel)</h4>
-                <textarea 
-                  rows={3} 
-                  placeholder="Décrivez brièvement le sujet que vous souhaitez aborder..."
-                  className="w-full border border-gray-200 rounded-lg p-3 text-sm text-gray-700 focus:outline-none focus:border-[#964594]"
-                ></textarea>
-              </div>
-
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer Actions */}
@@ -173,12 +206,13 @@ export default function BookingModal({ isOpen, onClose, mentor }: BookingModalPr
               Annuler
             </button>
             <button 
-              onClick={() => {
-                alert("Réservation confirmée !");
-                onClose();
-              }}
-              className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-[#47295C] text-white font-bold text-sm hover:bg-[#964594] transition-colors shadow-sm"
+              onClick={handleBook}
+              disabled={!selectedSlotId || isBooking}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition-colors shadow-sm ${
+                !selectedSlotId || isBooking ? "bg-gray-300 cursor-not-allowed" : "bg-[#47295C] hover:bg-[#964594]"
+              }`}
             >
+              {isBooking && <Loader2 size={16} className="animate-spin" />}
               Confirmer la réservation
             </button>
           </div>

@@ -13,53 +13,7 @@ interface Task {
   statusColor: string;
 }
 
-const mockTasks: Task[] = [
-  {
-    id: "1",
-    title: "Configurer la base de données",
-    isCompleted: false,
-    assigneeName: "Amal",
-    assigneeImage: "https://i.pravatar.cc/150?img=5",
-    status: "En cours",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-200"
-  },
-  {
-    id: "2",
-    title: "Intégrer l'API de paiement",
-    isCompleted: false,
-    assigneeName: "Yacine",
-    assigneeImage: "https://i.pravatar.cc/150?img=12",
-    status: "En cours",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-200"
-  },
-  {
-    id: "3",
-    title: "Rédiger user stories MVP",
-    isCompleted: true,
-    assigneeName: "Doria",
-    assigneeImage: "https://i.pravatar.cc/150?img=9",
-    status: "Terminé",
-    statusColor: "text-green-600 bg-green-50 border-green-200"
-  },
-  {
-    id: "4",
-    title: "Design review des écrans",
-    isCompleted: false,
-    assigneeName: "Doria",
-    assigneeImage: "https://i.pravatar.cc/150?img=9",
-    status: "En revue",
-    statusColor: "text-blue-600 bg-blue-50 border-blue-200"
-  },
-  {
-    id: "5",
-    title: "Préparer le deck investisseur",
-    isCompleted: false,
-    assigneeName: "Amine",
-    assigneeImage: "https://i.pravatar.cc/150?img=11",
-    status: "À faire",
-    statusColor: "text-gray-600 bg-gray-50 border-gray-200"
-  }
-];
+const mockTasks: Task[] = [];
 
 export default function TaskListWidget() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);

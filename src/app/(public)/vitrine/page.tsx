@@ -37,12 +37,12 @@ export default function VitrinePage() {
         {/* Filters */}
         <VitrineFilters />
 
-        {/* Startups Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {startupsData.map((startup) => (
             <StartupDirectoryCard 
               key={startup.id}
               {...startup}
+              description={startup.shortDescription}
             />
           ))}
         </div>
