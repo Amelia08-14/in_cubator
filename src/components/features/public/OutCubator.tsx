@@ -53,29 +53,12 @@ const alumni = [
 
 export default function OutCubator() {
   return (
-    <section className="w-full bg-[#fcfcfd] bg-pattern min-h-screen pt-24 pb-48 relative overflow-x-hidden text-[#47295C]" data-theme="light">
-      
-      {/* Background Decor (Subtle Grid/Dots) */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{
-          backgroundImage: 'radial-gradient(#47295C 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
-      }}></div>
-      
-      {/* Top Left Faint Glow */}
-      <div className="absolute top-0 left-0 w-1/2 h-[400px] bg-[#964594] rounded-full mix-blend-multiply filter blur-[150px] opacity-[0.02] pointer-events-none z-0"></div>
+    <section className="w-full bg-warm-cream pt-20 pb-32 relative overflow-x-hidden text-[#47295C]" data-theme="light">
 
       <div className="max-w-[1400px] mx-auto px-6 relative z-10 flex flex-col gap-24">
-        
+
         {/* --- SECTION A: HERO SPLIT --- */}
-        <div className="relative flex flex-col xl:flex-row gap-16 items-center min-h-[70vh] py-12">
-
-
-          {/* Faint curved line background decoration */}
-          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center opacity-40">
-            <div className="w-[120%] h-[150%] rounded-[100%] border-[1px] border-[#964594]/30 absolute -left-[20%] rotate-6"></div>
-            <div className="w-2 h-2 rounded-full bg-[#964594] absolute top-[25%] left-[55%]"></div>
-            <div className="w-2 h-2 rounded-full bg-[#964594] absolute bottom-[15%] left-[30%]"></div>
-          </div>
+        <div className="relative flex flex-col xl:flex-row gap-16 items-center py-12">
 
           {/* Left: Text */}
           <div className="flex-1 flex flex-col relative z-10 pl-0 xl:pl-16">

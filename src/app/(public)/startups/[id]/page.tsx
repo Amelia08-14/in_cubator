@@ -4,9 +4,10 @@ import { auth } from "@/auth";
 import StartupProfileClient from "./StartupProfileClient";
 
 
-export default async function PublicStartupProfilePage({ params }: { params: { id: string } }) {
+export default async function PublicStartupProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const startup = await prisma.startupProfile.findUnique({
-    where: { id: params.id, visiblePublic: true },
+    where: { id, visiblePublic: true },
   });
 
   if (!startup) {

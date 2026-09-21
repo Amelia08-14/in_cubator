@@ -4,116 +4,168 @@ import { prisma } from "@/lib/prisma";
 import TextReveal from "@/components/features/public/TextReveal";
 import StartupShowcase from "@/components/features/public/StartupShowcase";
 import OutCubator from "@/components/features/public/OutCubator";
-import Footer from "@/components/layouts/Footer";
 import HomeHero from "@/components/features/public/HomeHero";
+import WhyInCubator from "@/components/features/public/WhyInCubator";
 
+const HOW_IT_WORKS = [
+  {
+    title: "Candidature structurée",
+    desc: "Un questionnaire qui s'adapte à votre stade, pas un formulaire générique.",
+    tone: "plain" as const,
+  },
+  {
+    title: "Cohortes rythmées",
+    desc: "Des promotions qui avancent ensemble, avec un calendrier clair.",
+    tone: "yellow" as const,
+  },
+  {
+    title: "Vitrine publique",
+    desc: "Une page dédiée pour présenter votre startup aux investisseurs.",
+    tone: "plain" as const,
+  },
+];
 
 export default async function Home() {
   const dbMentors = await prisma.mentorProfile.findMany({
     where: { actif: true },
-    take: 4, // Take up to 4 mentors to showcase
+    take: 4,
   });
 
   return (
-    <div className="font-sans bg-violet-dark">
+    <div className="font-sans">
       <HomeHero />
 
-      {/* Intro section */}
-      <section className="min-h-screen w-full bg-white bg-pattern relative z-50 flex items-center justify-center p-8" data-theme="light">
-        <TextReveal text="Nous aidons les startups à remplacer les parcours complexes par une plateforme claire, intégrée et construite pour accélérer leur croissance." />
+      <WhyInCubator />
+
+      {/* Comment ça marche — bento grid */}
+      <section className="w-full bg-warm-cream px-6 py-24 sm:px-10" data-theme="light">
+        <div className="mx-auto w-full max-w-[1200px]">
+          <div className="mb-12 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+            <h2 className="font-serif text-4xl font-black uppercase leading-[0.95] tracking-tight">
+              <span className="text-violet-dark">Comment</span>{" "}
+              <span className="text-violet-main">ça marche</span>
+            </h2>
+            <p className="max-w-sm text-sm text-gray-main">
+              Tout ce qu&apos;il faut pour comprendre votre marché, vous entourer et avancer.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
+            <div className="rounded-[1.75rem] border border-black/5 bg-white p-7 lg:row-span-1">
+              <h3 className="font-serif text-lg font-bold text-violet-dark">{HOW_IT_WORKS[0].title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-main">{HOW_IT_WORKS[0].desc}</p>
+            </div>
+
+            <div className="relative overflow-hidden rounded-[1.75rem] bg-white sm:row-span-2">
+              <Image
+                src="/idea_bulb.png"
+                alt="De l'idée au marché"
+                fill
+                className="object-cover"
+                sizes="(min-width: 1024px) 33vw, 100vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-violet-dark/90 to-transparent p-6 pt-16">
+                <p className="font-serif text-base font-bold text-white">De l&apos;idée au marché</p>
+              </div>
+            </div>
+
+            <div className="rounded-[1.75rem] bg-yellow-orange/20 p-7">
+              <h3 className="font-serif text-lg font-bold text-violet-dark">{HOW_IT_WORKS[1].title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-violet-dark/70">{HOW_IT_WORKS[1].desc}</p>
+            </div>
+
+            <div className="rounded-[1.75rem] border border-black/5 bg-white p-7">
+              <h3 className="font-serif text-lg font-bold text-violet-dark">{HOW_IT_WORKS[2].title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-main">{HOW_IT_WORKS[2].desc}</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Portfolio / Startups Section (Centralized Scroll) */}
-      <section id="vitrine" className="min-h-screen w-full bg-[#fcfcfd] bg-pattern relative z-50 flex flex-col p-8 pt-32 lg:px-24 pb-24 text-[#47295C]" data-theme="light">
-        {/* Abstract Background Curves */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <svg className="absolute w-[150vw] h-[150vh] -top-[30%] -left-[25%] opacity-10 stroke-[#964594]" fill="none" viewBox="0 0 1000 1000">
-            <path d="M0,500 C300,200 700,800 1000,500 C1300,200 1700,800 2000,500" strokeWidth="2" strokeDasharray="5,5" />
-            <path d="M0,700 C400,300 600,900 1000,700 C1400,300 1600,900 2000,700" strokeWidth="1" />
-          </svg>
-        </div>
-
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col items-center relative z-10">
-          {/* Animated Header Area */}
-          <TextReveal 
-            text="Découvrez les projets qui réinventent demain." 
-            subtitle="Une sélection des startups les plus prometteuses soutenues par IN-CUBATOR."
-          />
+      {/* Startups intro */}
+      <section id="vitrine" className="w-full bg-white px-8 pb-8 pt-24" data-theme="light">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start gap-4">
+          <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-gray-main">
+            <span className="h-px w-8 bg-violet-main" />
+            Vitrine
+          </span>
+          <h2 className="max-w-2xl font-serif text-3xl font-extrabold leading-tight text-violet-dark md:text-4xl">
+            Des projets qui réinventent demain.
+          </h2>
         </div>
       </section>
 
-      {/* Full Screen Pinned Horizontal Scroll */}
       <StartupShowcase />
 
-      {/* White Spacer Section */}
-      <section className="w-full min-h-[60vh] bg-white relative z-50 flex items-center justify-center p-8" data-theme="light">
-        <TextReveal 
-          text="Pourquoi des experts ? Parce que le talent seul ne suffit pas. L'expérience de ceux qui ont déjà bâti des empires est le seul vrai raccourci vers le sommet." 
-          subtitle=""
-        />
-      </section>
-
-      {/* Mentors Preview Section */}
+      {/* Mentors Preview */}
       {dbMentors.length > 0 && (
-        <section id="mentors" className="w-full bg-white bg-pattern relative z-50 flex items-center justify-center py-32 px-8 text-[#47295C]" data-theme="light">
-          <div className="max-w-[1200px] mx-auto w-full flex flex-col items-center">
-            
-            <TextReveal 
-              text="Rencontrez nos experts" 
-              subtitle="Des professionnels expérimentés pour vous guider de l'idéation à la levée de fonds."
-              className="w-full text-center mb-16"
-            />
+        <section id="mentors" className="w-full bg-warm-cream px-8 py-24" data-theme="light">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center">
+            <div className="mb-16 flex max-w-2xl flex-col items-center gap-4 text-center">
+              <span className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-gray-main">
+                <span className="h-px w-8 bg-violet-main" />
+                Nos experts
+              </span>
+              <h2 className="font-serif text-3xl font-extrabold text-violet-dark md:text-4xl">
+                Rencontrez ceux qui vous accompagnent.
+              </h2>
+              <p className="text-base text-gray-main">
+                Des professionnels expérimentés pour vous guider de l&apos;idéation à la levée de fonds.
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full mb-16 px-4">
+            <div className="mb-16 grid w-full grid-cols-1 gap-6 px-4 md:grid-cols-2 lg:grid-cols-4">
               {dbMentors.map((mentor) => {
                 const expertiseArray = Array.isArray(mentor.expertise) ? (mentor.expertise as string[]) : [];
                 const role = expertiseArray.length > 0 ? expertiseArray[0] : "Expert";
-                const firstSecteur = Array.isArray(mentor.secteurs) && mentor.secteurs.length > 0 ? mentor.secteurs[0] : "Secteur";
 
                 return (
-                  <div key={mentor.id} className="flex flex-col items-center text-center p-12 bg-white rounded-[2rem] shadow-[0_15px_40px_rgba(0,0,0,0.08)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300">
-                    {/* Anonymous Avatar */}
-                    <div className="w-36 h-36 rounded-full border-4 border-[#D44835]/40 bg-gradient-to-br from-gray-50 to-gray-200 mb-6 shadow-inner relative overflow-hidden">
+                  <div
+                    key={mentor.id}
+                    className="flex flex-col items-center rounded-[1.75rem] border border-black/5 bg-white p-8 text-center shadow-[0_15px_40px_rgba(71,41,92,0.06)] transition-transform duration-300 hover:-translate-y-1.5"
+                  >
+                    <div className="relative mb-5 h-24 w-24 overflow-hidden rounded-full border-2 border-violet-main/20 bg-gray-50">
                       <Image src="/placeholder-avatar.png" alt={mentor.nomComplet || "Mentor avatar"} fill className="object-cover" />
                     </div>
-                    
-                    <h3 className="font-serif font-extrabold text-2xl md:text-3xl mb-1 text-[#47295C]">{mentor.nomComplet}</h3>
-                    <p className="text-sm md:text-base text-[#964594] font-bold tracking-wide uppercase mb-6">{role}</p>
-                    
-                    <p className="text-sm md:text-base text-gray-500 italic mb-8 leading-relaxed line-clamp-4">
+
+                    <h3 className="mb-1 font-serif text-lg font-bold text-violet-dark">{mentor.nomComplet}</h3>
+                    <p className="mb-4 text-xs font-bold uppercase tracking-wide text-violet-main">{role}</p>
+
+                    <p className="mb-6 line-clamp-3 text-sm leading-relaxed text-gray-main">
                       {mentor.bio}
                     </p>
-                    
-                    <div className="mt-auto flex gap-4 text-gray-400">
-                      <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">in</div>
-                      <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">tw</div>
-                      <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#964594] hover:border-[#964594] hover:text-white transition-colors cursor-pointer text-xs">✉</div>
+
+                    <div className="mt-auto flex gap-3 text-gray-main">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-black/10 text-[10px] transition-colors hover:border-violet-main hover:text-violet-main">in</div>
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-black/10 text-[10px] transition-colors hover:border-violet-main hover:text-violet-main">tw</div>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            <div className="mt-16 text-center flex flex-col items-center">
-              <Link href="/mentors" className="px-8 py-4 rounded-md bg-[#47295C] text-white font-bold text-sm shadow-xl hover:bg-[#964594] hover:scale-105 transition-all flex items-center gap-3">
-                Découvrir tous les mentors
-                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
-              </Link>
-            </div>
+            <Link
+              href="/mentors"
+              className="rounded-full bg-violet-dark px-8 py-3.5 text-sm font-bold text-white shadow-[0_10px_25px_rgba(71,41,92,0.2)] transition-all hover:-translate-y-0.5 hover:bg-violet-main"
+            >
+              Découvrir tous les mentors
+            </Link>
           </div>
         </section>
       )}
 
-      {/* White Spacer Section (Transition to Out-Cubator) */}
-      <section id="out-cubator" className="w-full min-h-[60vh] bg-[#fcfcfd] bg-pattern relative z-50 flex items-center justify-center p-8 pb-0" data-theme="light">
-        <TextReveal 
-          superTitle="NOS ALUMNI"
-          text="Des startups qui continuent d'aller loin." 
-          subtitle="Découvrez quelques startups qui ont terminé le programme IN-CUBATOR et qui créent aujourd'hui un impact réel."
-        />
+      {/* Out-Cubator teaser lead-in */}
+      <section id="out-cubator" className="w-full bg-white px-8 pt-24 pb-0" data-theme="light">
+        <div className="mx-auto w-full max-w-[1200px]">
+          <TextReveal
+            superTitle="NOS ALUMNI"
+            text="Des startups qui continuent d'aller loin."
+            subtitle="Découvrez quelques startups qui ont terminé le programme IN-CUBATOR et qui créent aujourd'hui un impact réel."
+            className="mx-auto flex min-h-0 w-full flex-col items-center py-0 text-center"
+          />
+        </div>
       </section>
 
-      {/* Out-Cubator Section */}
       <OutCubator />
     </div>
   );

@@ -1,133 +1,51 @@
-"use client";
-
-import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
 export default function HomeHero() {
-  const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      
-      if (scrollY < vh * 0.5) {
-        setStep(0);
-      } else if (scrollY < vh * 1.5) {
-        setStep(1);
-      } else {
-        setStep(2);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const getDotPosition = () => {
-    if (step === 0) return "top-0";
-    if (step === 1) return "top-1/2";
-    return "top-[100%]";
-  };
-
   return (
-    <div id="candidature" className="relative h-[300vh]" data-theme="dark">
-      <div className="sticky top-0 h-screen w-full flex flex-col text-white overflow-hidden">
-        {/* Background & Overlays */}
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="/ChatGPT Image 9 août 2026, 18_35_05.png" 
-            alt="Hero Background" 
-            fill 
-            className="object-cover opacity-40"
-            priority
-          />
-          <div className="absolute inset-0 bg-[#47295C]/80 mix-blend-multiply"></div>
-          {/* CSS Grid Pattern */}
-          <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)',
-              backgroundSize: '40px 40px'
-          }}></div>
-        </div>
+    <div id="candidature" className="relative overflow-hidden bg-white" data-theme="light">
+      {/* Soft wash, top only — like a light color smear behind the big type */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_60%_60%_at_20%_0%,rgba(150,69,148,0.14),transparent_60%),radial-gradient(ellipse_50%_50%_at_80%_10%,rgba(255,194,90,0.16),transparent_60%)]" />
 
-        {/* Orbital Rings (CSS simulated) */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
-          <div className="absolute w-[85vw] h-[35vw] max-w-[1200px] max-h-[500px] rounded-[50%] border border-violet-main/30 -rotate-12 shadow-[0_0_30px_rgba(150,69,148,0.15)]"></div>
-          <div className="absolute w-[75vw] h-[45vw] max-w-[1000px] max-h-[600px] rounded-[50%] border border-orange-accent/10 rotate-12 shadow-[0_0_20px_rgba(212,72,53,0.05)]"></div>
-        </div>
+      <div className="relative mx-auto w-full max-w-[1300px] px-6 pt-36 sm:px-10 lg:pt-44">
+        {/* Massive display headline with floating card overlapping it */}
+        <div className="relative pb-0 sm:pb-44 lg:pb-32">
+          <h1 className="select-none font-serif font-black uppercase leading-[0.9] tracking-tight text-violet-dark">
+            <span className="block text-[2.3rem] sm:text-[5.5rem] lg:text-[7.5rem]">Construisez</span>
+            <span className="block text-[2.3rem] text-violet-main sm:text-[5.5rem] lg:text-[7.5rem]">Autrement.</span>
+          </h1>
 
-        {/* Left Sidebar (Socials) */}
-        <aside className="absolute left-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-12 text-[10px] font-bold tracking-widest text-gray-400 rotate-180" style={{ writingMode: 'vertical-rl' }}>
-          <Link href="#" className="hover:text-white transition-colors">LINKEDIN</Link>
-          <span className="text-violet-main/50">•</span>
-          <Link href="#" className="hover:text-white transition-colors">INSTAGRAM</Link>
-          <span className="text-violet-main/50">•</span>
-          <Link href="#" className="hover:text-white transition-colors">TWITTER</Link>
-        </aside>
-
-        {/* Right Sidebar (Scroll) */}
-        <aside className="absolute right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center justify-between h-[450px]">
-          <div className="text-[10px] font-bold tracking-widest text-gray-400 rotate-90 whitespace-nowrap mb-24" style={{ transformOrigin: 'left center' }}>
-            SCROLL TO EXPLORE
-          </div>
-          <div className="relative h-32 w-[1px] bg-white/20 my-6">
-              <div className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_white] transition-all duration-700 ease-in-out ${getDotPosition()}`}></div>
-          </div>
-          <div className="flex flex-col gap-3 text-[10px] font-mono text-gray-400">
-            <span className="text-white">0{step + 1}</span>
-            <span className="w-full h-[1px] bg-white/20"></span>
-            <span>03</span>
-          </div>
-        </aside>
-
-        {/* Main Content / Orbit Elements */}
-        <main className="relative flex-1 flex items-center justify-center z-10 w-full pt-20">
-          {/* Center Text */}
-          <div 
-            key={step}
-            className="text-center z-20 flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-700"
-          >
-            <h1 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-serif font-bold tracking-tight text-white drop-shadow-[0_0_50px_rgba(150,69,148,0.4)] uppercase w-full px-4">
-              {step === 0 && "INNOVER. ACCÉLÉRER. FINANCER."}
-              {step === 1 && "CONNECTER. BÂTIR. DÉPLOYER."}
-              {step === 2 && "STRUCTURER. MENTORER. LEVER."}
-            </h1>
-            <p className="text-sm md:text-base lg:text-lg text-gray-300 font-light max-w-xl px-4 drop-shadow-md leading-relaxed">
-              {step === 0 && "L'écosystème complet pour transformer votre vision en startup performante. Un accompagnement de bout en bout, de l'idéation à la Deal Room sécurisée."}
-              {step === 1 && "Rejoignez un réseau d'experts exclusif et d'investisseurs stratégiques. Un accompagnement sur-mesure et des outils dédiés pour propulser votre croissance."}
-              {step === 2 && "Votre espace centralisé pour piloter votre roadmap, collaborer en direct avec vos mentors et convaincre les investisseurs grâce à une Deal Room maîtrisée."}
-            </p>
-          </div>
-
-          {/* Orbit Items */}
-          <div className="absolute inset-0 w-full h-full max-w-[1400px] mx-auto pointer-events-none">
-          </div>
-        </main>
-
-        {/* Bottom Footer */}
-        <footer className="relative z-50 p-8 flex flex-col lg:flex-row justify-between items-end lg:items-end w-full mt-auto gap-8">
-          
-          {/* Left Info */}
-          <div className="flex flex-col gap-5 w-full lg:w-1/3">
-            <p className="text-sm text-gray-300 font-light leading-relaxed max-w-[300px]">
-              Mentorat, Deal Room et espaces startups conçus autour de vos idées, de vos équipes et de votre croissance.
-            </p>
-            <div className="flex gap-4">
-              <Link href="/contact" className="border border-white/50 px-6 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase text-white hover:bg-[#964594] hover:text-white hover:border-[#964594] transition-all w-fit">
-                NOUS CONTACTER
-              </Link>
+          {/* Floating visual card, echoing a phone/product glimpse */}
+          <div className="relative mx-auto mt-8 w-full max-w-[220px] sm:absolute sm:right-0 sm:top-0 sm:mt-0 sm:max-w-[240px] lg:max-w-[280px]">
+            <div className="aspect-[4/5] w-full rounded-[1.75rem] bg-gradient-to-br from-violet-main via-violet-dark to-violet-dark shadow-[0_25px_50px_rgba(71,41,92,0.35)]" />
+            <div className="absolute -left-6 top-6 flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-[11px] font-bold text-violet-dark shadow-[0_10px_25px_rgba(0,0,0,0.12)] sm:-left-10">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-main" />
+              Cohorte 2026 ouverte
+            </div>
+            <div className="absolute -bottom-4 -right-2 rounded-full bg-yellow-orange px-3.5 py-2 text-[11px] font-bold text-violet-dark shadow-[0_10px_25px_rgba(0,0,0,0.12)] sm:-right-6">
+              Mentorat 1:1
             </div>
           </div>
+        </div>
 
-          {/* Center */}
-          <div className="w-full lg:w-1/3"></div>
-
-          {/* Right Action */}
-          <div className="w-full lg:w-1/3"></div>
-
-        </footer>
+        {/* Split subtext + CTA, like a caption row under the big type */}
+        <div className="mt-14 flex flex-col gap-8 border-t border-black/5 pt-8 sm:flex-row sm:items-start sm:justify-between lg:mt-20">
+          <div className="grid max-w-2xl grid-cols-1 gap-6 sm:grid-cols-2">
+            <p className="text-sm leading-relaxed text-gray-main">
+              Le parcours structuré pour transformer une idée en startup&nbsp;: candidature,
+              mentorat et roadmap suivie.
+            </p>
+            <p className="text-sm leading-relaxed text-gray-main">
+              Une Deal Room sécurisée pour convaincre les investisseurs, jusqu&apos;à la levée
+              de fonds.
+            </p>
+          </div>
+          <Link
+            href="/candidature"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-violet-dark px-7 py-3.5 text-sm font-bold text-white shadow-[0_12px_25px_rgba(71,41,92,0.25)] transition-all hover:-translate-y-0.5 hover:bg-violet-main"
+          >
+            Candidater →
+          </Link>
+        </div>
       </div>
     </div>
   );

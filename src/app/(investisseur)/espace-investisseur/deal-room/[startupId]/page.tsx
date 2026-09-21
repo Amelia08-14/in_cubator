@@ -4,7 +4,7 @@ import ReadOnlyDocumentTable from "@/components/features/espace-investisseur/dea
 import { Bell, ChevronDown, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default function DealRoomPage({ params }: { params: { startupId: string } }) {
+export default function DealRoomPage() {
   // In a real app, you would fetch startup data here using params.startupId
   // For the UI demonstration, we assume NovaTech data is loaded
 

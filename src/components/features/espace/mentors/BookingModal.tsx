@@ -48,15 +48,12 @@ export default function BookingModal({ isOpen, onClose, mentor, startupId }: Boo
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: "MENTORAT",
-          startupId: startupId,
-          mentorId: mentor.id,
           disponibiliteId: selectedSlotId
         })
       });
 
       const json = await res.json();
-      if (!res.ok || !json.success) {
+      if (!res.ok) {
         setErrorMsg(json.error?.message || "Erreur lors de la réservation.");
       } else {
         alert("Réservation confirmée ! Vous recevrez un email prochainement.");

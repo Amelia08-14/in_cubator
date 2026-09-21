@@ -1,6 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
 
+const STATUS_STYLES: Record<string, string> = {
+  "EN LIGNE": "bg-green-main/10 text-green-main",
+  "BETA": "bg-yellow-orange/15 text-[#9a6a00]",
+  "LANCEMENT": "bg-blue-main/10 text-blue-main",
+};
+
 const startups = [
   {
     id: 1,
@@ -42,109 +48,81 @@ const startups = [
 
 export default function StartupShowcase() {
   return (
-    <div data-theme="dark" className="w-full relative bg-[#47295C] py-32 px-4 overflow-hidden">
-      
-      {/* Hero-like Background Layer */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/ChatGPT Image 9 août 2026, 18_35_05.png"
-          alt="Showcase Background"
-          fill
-          className="object-cover opacity-20"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-[#47295C]/60 to-[#47295C]"></div>
-      </div>
-
-      <div className="max-w-[1200px] mx-auto w-full relative z-10 flex flex-col gap-16">
+    <div data-theme="light" className="relative w-full overflow-hidden bg-white px-4 py-16 lg:py-20">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-10">
         {startups.map((startup) => (
-          <div key={startup.id} className="w-full flex flex-col lg:flex-row gap-8 lg:gap-16 bg-[#47295C]/40 backdrop-blur-xl text-white p-8 lg:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden">
-            
+          <div
+            key={startup.id}
+            className="flex w-full flex-col gap-10 overflow-hidden rounded-[2rem] border border-gray-100 bg-white p-8 shadow-[0_15px_45px_rgba(71,41,92,0.06)] lg:flex-row lg:gap-16 lg:p-12"
+          >
             {/* Left Column (Text & Data) */}
-            <div className="flex-1 flex flex-col justify-between">
+            <div className="flex flex-1 flex-col justify-between">
               <div>
                 {/* Header */}
-                <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-                  <h4 className="font-bold text-xl tracking-tight">{startup.name}</h4>
-                  <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">{startup.status}</span>
+                <div className="mb-8 flex items-center justify-between gap-4 border-b border-gray-100 pb-4">
+                  <h4 className="text-xl font-bold tracking-tight text-violet-dark">{startup.name}</h4>
+                  <span
+                    className={`rounded-full px-3 py-1 text-[10px] font-bold tracking-widest uppercase sm:text-xs ${STATUS_STYLES[startup.status]}`}
+                  >
+                    {startup.status}
+                  </span>
                 </div>
-                
+
                 {/* Title & Desc */}
-                <h3 className="font-serif font-extrabold text-3xl md:text-4xl lg:text-[2.75rem] mb-6 leading-[1.1] tracking-tight text-white">
+                <h3 className="mb-6 font-serif text-3xl font-extrabold leading-[1.15] tracking-tight text-violet-dark md:text-4xl lg:text-[2.75rem]">
                   {startup.title}
                 </h3>
-                <p className="text-base md:text-lg text-gray-300 font-sans font-light opacity-90 max-w-xl mb-12">
+                <p className="mb-12 max-w-xl font-sans text-base text-gray-500 md:text-lg">
                   {startup.desc}
                 </p>
               </div>
 
               {/* Metadata Grid */}
               <div className="mt-auto">
-                <div className="grid grid-cols-2 gap-y-8 gap-x-4 border-t border-b border-white/10 py-6 mb-8">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-8 border-y border-gray-100 py-6 mb-8">
                   <div>
-                    <p className="text-xs text-gray-400 mb-2">Produit</p>
-                    <p className="text-base font-medium">{startup.product}</p>
+                    <p className="mb-2 text-xs text-gray-400">Produit</p>
+                    <p className="text-base font-semibold text-violet-dark">{startup.product}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-2">Marché</p>
-                    <p className="text-base font-medium">{startup.market}</p>
+                    <p className="mb-2 text-xs text-gray-400">Marché</p>
+                    <p className="text-base font-semibold text-violet-dark">{startup.market}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-2">Priorité</p>
-                    <p className="text-base font-medium">{startup.priority}</p>
+                    <p className="mb-2 text-xs text-gray-400">Priorité</p>
+                    <p className="text-base font-semibold text-violet-dark">{startup.priority}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-2">Surface</p>
-                    <p className="text-base font-medium">{startup.surface}</p>
+                    <p className="mb-2 text-xs text-gray-400">Surface</p>
+                    <p className="text-base font-semibold text-violet-dark">{startup.surface}</p>
                   </div>
                 </div>
-                
+
                 {/* Footer Links */}
-                <div className="flex justify-between items-center text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/90">
-                  <a href="#" className="flex items-center gap-2 hover:text-[#c4a4e3] transition-colors group">
-                    VOIR L'ÉTUDE <span className="text-lg leading-none group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                <div className="flex items-center justify-between text-[10px] font-bold tracking-widest uppercase text-violet-dark sm:text-xs">
+                  <a href="#" className="group flex items-center gap-2 transition-colors hover:text-violet-main">
+                    Voir l&apos;étude <span className="text-lg leading-none transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
                   </a>
-                  <a href="#" className="flex items-center gap-2 hover:text-[#c4a4e3] transition-colors group">
-                    SITE EN LIGNE <span className="text-lg leading-none group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                  <a href="#" className="group flex items-center gap-2 transition-colors hover:text-violet-main">
+                    Site en ligne <span className="text-lg leading-none transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>
                   </a>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column (Image Mockup) */}
-            <div className="w-full lg:w-[45%] flex flex-col items-center justify-center bg-gradient-to-br from-white/5 to-transparent rounded-[1.5rem] p-6 lg:p-10 border border-white/10 relative group">
-              {/* Decorative background grid in the image container */}
-              <div className="absolute inset-0 z-0 opacity-20 pointer-events-none rounded-[1.5rem]" style={{
-                  backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)',
-                  backgroundSize: '20px 20px'
-              }}></div>
-              
-              {/* Floating Mockup Box */}
-              <div className="relative w-full aspect-[4/3] transform transition-all duration-700 group-hover:scale-[1.03] group-hover:-translate-y-2 z-10 shadow-[0_20px_40px_rgba(0,0,0,0.4)] rounded-2xl overflow-hidden bg-[#080312] border border-white/20">
-                
-                {/* Mockup Header (like a browser window) */}
-                <div className="h-8 bg-white/5 border-b border-white/10 flex items-center px-4 gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
-                </div>
-                
-                {/* Image / Content */}
-                <div className="relative w-full h-[calc(100%-2rem)]">
-                  <Image 
-                    src={startup.img} 
-                    alt={startup.name}
-                    fill
-                    className="object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-[#964594]/20 to-transparent mix-blend-screen pointer-events-none"></div>
                 </div>
               </div>
             </div>
 
+            {/* Right Column (Visual) */}
+            <div className="relative min-h-[240px] w-full overflow-hidden rounded-[1.5rem] lg:w-[45%]">
+              <Image
+                src={startup.img}
+                alt={startup.name}
+                fill
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="object-cover"
+              />
+            </div>
           </div>
         ))}
       </div>
-
     </div>
   );
 }

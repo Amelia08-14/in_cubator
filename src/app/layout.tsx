@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Roboto_Slab } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import LenisProvider from "@/components/layouts/LenisProvider";
 
 import { Providers } from "@/components/providers/Providers";
 
-const robotoSlab = Roboto_Slab({
-  variable: "--font-roboto-slab",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["300", "500", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${robotoSlab.variable} antialiased`}
+      className={`${montserrat.variable} antialiased`}
     >
       <body className="flex flex-col font-sans">
         <Providers>

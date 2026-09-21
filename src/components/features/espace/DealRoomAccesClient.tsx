@@ -30,8 +30,7 @@ export default function DealRoomAccesClient({ initialRequests }: Props) {
         body: JSON.stringify({ statut: newStatus })
       });
 
-      const json = await res.json();
-      if (res.ok && json.success) {
+      if (res.ok) {
         setRequests(prev => prev.map(req => req.id === id ? { ...req, statut: newStatus as any } : req));
       } else {
         alert("Erreur lors de la mise à jour.");

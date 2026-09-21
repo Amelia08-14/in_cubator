@@ -4,13 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+
+import { useCurrentUser, useLogout } from "@/lib/auth-client";
+import { ROLE_DASHBOARD } from "@/lib/auth-contract";
 
 export default function PublicHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHeaderDark, setIsHeaderDark] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: user } = useCurrentUser();
+  const logout = useLogout("/");
+  const dashboard = user ? ROLE_DASHBOARD[user.role] ?? "/" : "/connexion";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +48,7 @@ export default function PublicHeader() {
   }, [pathname]);
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-[100] px-8 py-6 flex justify-between items-center transition-all duration-500 ${isHeaderDark ? 'bg-white border-b border-gray-200 shadow-sm' : `bg-[#47295C]/80 backdrop-blur-md border-b ${isScrolled ? 'border-white/10' : 'border-transparent'}`}`}>
+    <header className={`fixed top-0 left-0 w-full z-[100] px-8 py-6 flex justify-between items-center transition-all duration-500 ${isHeaderDark ? 'bg-white border-b border-gray-200 shadow-sm' : `bg-violet-dark/90 backdrop-blur-md border-b ${isScrolled ? 'border-white/10' : 'border-transparent'}`}`}>
       <Link href="/" className="flex items-center">
         <Image 
           src="/logo.png" 
@@ -85,10 +89,10 @@ export default function PublicHeader() {
         </Link>
       </nav>
       <div className="flex items-center gap-4">
-        {session?.user ? (
+        {user ? (
           <>
             <button 
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => void logout()}
               className={`px-4 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase transition-all duration-500 hover:bg-gray-100 ${
                 isHeaderDark 
                   ? 'text-gray-500' 
@@ -98,7 +102,7 @@ export default function PublicHeader() {
               DÉCONNEXION
             </button>
             <Link 
-              href="/espace" 
+              href={dashboard}
               className={`px-6 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase transition-all duration-500 border hover:bg-[#964594] hover:text-white hover:border-[#964594] bg-[#964594] text-white border-[#964594] shadow-sm`}
             >
               MON ESPACE

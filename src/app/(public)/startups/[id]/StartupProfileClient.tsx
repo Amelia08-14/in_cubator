@@ -38,8 +38,8 @@ export default function StartupProfileClient({
         body: JSON.stringify({ startupId })
       });
       const json = await res.json();
-      
-      if (!res.ok || !json.success) {
+
+      if (!res.ok) {
         if (json.error?.code === 'CONFLICT') {
           setRequestStatus("SUCCESS");
         } else {

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+import { authErrorMessage, login, logout } from "@/lib/auth-client";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -14,18 +15,24 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError("");
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      loginType: "admin", // Enforces this is an admin login
-      redirect: false,
-    });
+    try {
+      const user = await login(email, password);
 
-    if (res?.error) {
-      setError("Identifiants incorrects ou accès non autorisé");
-    } else {
+      if (user.role !== "ADMIN" && user.role !== "GESTIONNAIRE") {
+        await logout().catch(() => undefined);
+        setError("Identifiants incorrects ou accès non autorisé");
+        return;
+      }
+
       router.push("/admin");
       router.refresh();
+    } catch (caughtError) {
+      setError(
+        authErrorMessage(
+          caughtError,
+          "Identifiants incorrects ou accès non autorisé",
+        ),
+      );
     }
   };
 

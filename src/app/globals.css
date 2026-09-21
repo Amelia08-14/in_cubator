@@ -11,13 +11,18 @@
   --color-jaune-orange: #FFC25A;
   --color-vert: #73B866;
   --color-gris: #7A7A7A;
+
+  /* Warm neutral background, close to the in-network.dz sibling site —
+     never a stark/pastel white. */
+  --color-creme-chaud: #FAF6EF;
+  --color-creme-carte: #FFFFFF;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Helvetica, Arial, sans-serif;
-  --font-serif: var(--font-roboto-slab), serif;
+  --font-sans: var(--font-montserrat), Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-montserrat), Helvetica, Arial, sans-serif;
   --color-violet-main: var(--color-violet-principal);
   --color-orange-accent: var(--color-orange-accent);
   --color-blue-main: var(--color-bleu);
@@ -26,6 +31,8 @@
   --color-yellow-orange: var(--color-jaune-orange);
   --color-green-main: var(--color-vert);
   --color-gray-main: var(--color-gris);
+  --color-warm-cream: var(--color-creme-chaud);
+  --color-card-white: var(--color-creme-carte);
 }
 
 @media (prefers-color-scheme: dark) {

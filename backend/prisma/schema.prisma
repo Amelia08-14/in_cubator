@@ -1,0 +1,439 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  runtime                = "nodejs"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  PORTEUR_STARTUP
+  MENTOR_EXPERT
+  INVESTISSEUR
+  PARTENAIRE
+  GESTIONNAIRE
+  ADMIN
+}
+
+enum StadeStartup {
+  IDEE
+  PROTOTYPE
+  EARLY_TRACTION
+  SCALE
+}
+
+enum StatutCandidature {
+  SOUMISE
+  EN_EVALUATION
+  ENTRETIEN_PLANIFIE
+  ACCEPTEE
+  LISTE_ATTENTE
+  REFUSEE
+}
+
+enum StatutObjectif {
+  A_FAIRE
+  EN_COURS
+  TERMINE
+  EN_RETARD
+}
+
+enum TypeDocument {
+  PITCH_DECK
+  BUSINESS_PLAN
+  KPI_REPORT
+  FINANCIER
+  CANDIDATURE
+  AUTRE
+}
+
+enum StatutAcces {
+  DEMANDE
+  ACCORDE
+  REVOQUE
+  REFUSE
+}
+
+enum TypeMeeting {
+  MENTORAT
+  INVESTISSEUR
+  AUTRE
+}
+
+enum StatutMeeting {
+  DEMANDE
+  CONFIRME
+  ANNULE
+  TERMINE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  startupProfile  StartupProfile?
+  mentorProfile   MentorProfile?
+  investorProfile InvestorProfile?
+  partnerProfile  PartnerProfile?
+
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  createdTaches   Tache[]          @relation("tache_creePar")
+  assignedTaches  Tache[]          @relation("tache_assigneA")
+  uploadedDocs    Document[]       @relation("doc_uploadePar")
+  demandeMeetings Meeting[]        @relation("meeting_demandePar")
+  accordeAcces    AccesDealRoom[]  @relation("acces_accordePar")
+  refreshSessions RefreshSession[]
+
+  @@map("users")
+}
+
+model RefreshSession {
+  id           String    @id
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyId     String    @db.Char(36)
+  replacedById String?   @db.Char(36)
+  tokenHash    String    @unique @db.Char(64)
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  userAgent    String?   @db.VarChar(512)
+  ipAddress    String?   @db.VarChar(45)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([userId, revokedAt])
+  @@index([familyId, revokedAt])
+  @@index([expiresAt])
+  @@map("refresh_sessions")
+}
+
+model StartupProfile {
+  id            String       @id @default(cuid())
+  userId        String       @unique
+  user          User         @relation(fields: [userId], references: [id])
+  nom           String
+  secteurs      Json
+  stade         StadeStartup
+  description   String       @db.Text
+  pitchResume   String?      @db.Text
+  logoUrl       String?
+  siteWeb       String?
+  besoins       Json
+  cohorteId     String?
+  cohorte       Cohorte?     @relation(fields: [cohorteId], references: [id])
+  visiblePublic Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  membres       TeamMember[]
+  candidature   Candidature?
+  objectifs     Objectif[]
+  taches        Tache[]
+  documents     Document[]
+  accesDealRoom AccesDealRoom[]
+  meetings      Meeting[]
+  watchlists    Watchlist[]
+
+  @@map("startup_profiles")
+}
+
+model MentorProfile {
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id])
+  nomComplet     String  @default("Mentor Inconnu")
+  expertise      Json
+  secteurs       Json
+  langues        Json
+  bio            String  @db.Text
+  titreFonction  String?
+  linkedinUrl    String?
+  tarifIndicatif String?
+  noteMoyenne    Float   @default(0)
+  actif          Boolean @default(true)
+
+  disponibilites Disponibilite[]
+  meetings       Meeting[]
+
+  @@map("mentor_profiles")
+}
+
+model InvestorProfile {
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  user             User    @relation(fields: [userId], references: [id])
+  organisation     String?
+  typeInvestisseur String?
+  siteWeb          String?
+  bio              String? @db.Text
+  secteursCibles   Json
+  stadesCibles     Json
+  ticketMin        Int?
+  ticketMax        Int?
+  zoneGeographique String?
+  emailAlerts      Boolean @default(true)
+  watchlistAlerts  Boolean @default(true)
+  logoUrl          String?
+
+  accesDealRoom AccesDealRoom[]
+  watchlists    Watchlist[]
+  meetings      Meeting[]
+
+  @@map("investor_profiles")
+}
+
+model PartnerProfile {
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  user            User           @relation(fields: [userId], references: [id])
+  organisation    String
+  typePartenaire  TypePartenaire
+  besoinsExprimes String?        @db.Text
+
+  @@map("partner_profiles")
+}
+
+enum TypePartenaire {
+  HOPITAL
+  INDUSTRIEL
+  UNIVERSITE
+  INSTITUTION
+  AUTRE
+}
+
+model Cohorte {
+  id        String        @id @default(cuid())
+  nom       String
+  dateDebut DateTime
+  dateFin   DateTime
+  statut    StatutCohorte
+
+  startups     StartupProfile[]
+  candidatures Candidature[]
+
+  @@map("cohortes")
+}
+
+enum StatutCohorte {
+  OUVERTE_CANDIDATURES
+  EN_COURS
+  TERMINEE
+}
+
+model Candidature {
+  id            String            @id @default(cuid())
+  startupId     String            @unique
+  startup       StartupProfile    @relation(fields: [startupId], references: [id])
+  cohorteId     String
+  cohorte       Cohorte           @relation(fields: [cohorteId], references: [id])
+  reponses      Json
+  statut        StatutCandidature @default(SOUMISE)
+  score         Int?
+  evaluateurId  String?
+  motifDecision String?           @db.Text
+  rapportPdfUrl String?
+  dateDecision  DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("candidatures")
+}
+
+model TeamMember {
+  id        String         @id @default(cuid())
+  startupId String
+  startup   StartupProfile @relation(fields: [startupId], references: [id])
+  nom       String
+  role      String
+  linkedin  String?
+
+  @@map("team_members")
+}
+
+model Objectif {
+  id           String         @id @default(cuid())
+  startupId    String
+  startup      StartupProfile @relation(fields: [startupId], references: [id])
+  titre        String
+  description  String?        @db.Text
+  dateEcheance DateTime?
+  statut       StatutObjectif @default(A_FAIRE)
+  creePar      String
+
+  taches Tache[]
+
+  @@map("objectifs")
+}
+
+model Tache {
+  id           String         @id @default(cuid())
+  startupId    String
+  startup      StartupProfile @relation(fields: [startupId], references: [id])
+  objectifId   String?
+  objectif     Objectif?      @relation(fields: [objectifId], references: [id])
+  titre        String
+  statut       StatutObjectif @default(A_FAIRE)
+  assigneA     String?
+  assigneAUser User?          @relation("tache_assigneA", fields: [assigneA], references: [id])
+  creePar      String
+  creeParUser  User           @relation("tache_creePar", fields: [creePar], references: [id])
+  dateEcheance DateTime?
+
+  @@map("taches")
+}
+
+model Disponibilite {
+  id        String        @id @default(cuid())
+  mentorId  String
+  mentor    MentorProfile @relation(fields: [mentorId], references: [id])
+  dateDebut DateTime
+  dateFin   DateTime
+  format    String        @default("Visioconférence")
+  type      String        @default("Individuel")
+  capacity  Int?
+  reservee  Boolean       @default(false)
+  meeting   Meeting?
+
+  @@map("disponibilites")
+}
+
+model Meeting {
+  id              String           @id @default(cuid())
+  type            TypeMeeting
+  startupId       String
+  startup         StartupProfile   @relation(fields: [startupId], references: [id])
+  mentorId        String?
+  mentor          MentorProfile?   @relation(fields: [mentorId], references: [id])
+  investisseurId  String?
+  investisseur    InvestorProfile? @relation(fields: [investisseurId], references: [id])
+  disponibiliteId String?          @unique
+  disponibilite   Disponibilite?   @relation(fields: [disponibiliteId], references: [id])
+  demandeParId    String
+  demandePar      User             @relation("meeting_demandePar", fields: [demandeParId], references: [id])
+  statut          StatutMeeting    @default(DEMANDE)
+  notes           String?          @db.Text
+  noteMentorat    Int?
+  createdAt       DateTime         @default(now())
+
+  @@map("meetings")
+}
+
+model Document {
+  id                   String         @id @default(cuid())
+  startupId            String
+  startup              StartupProfile @relation(fields: [startupId], references: [id])
+  type                 TypeDocument
+  fichierUrl           String
+  version              Int            @default(1)
+  visibleInvestisseurs Boolean        @default(false)
+  uploadeParId         String
+  uploadePar           User           @relation("doc_uploadePar", fields: [uploadeParId], references: [id])
+  createdAt            DateTime       @default(now())
+
+  @@map("documents")
+}
+
+model AccesDealRoom {
+  id             String          @id @default(cuid())
+  startupId      String
+  startup        StartupProfile  @relation(fields: [startupId], references: [id])
+  investisseurId String
+  investisseur   InvestorProfile @relation(fields: [investisseurId], references: [id])
+  statut         StatutAcces     @default(DEMANDE)
+  accordeParId   String?
+  accordePar     User?           @relation("acces_accordePar", fields: [accordeParId], references: [id])
+  dateAcces      DateTime?
+  createdAt      DateTime        @default(now())
+
+  @@unique([startupId, investisseurId])
+  @@map("acces_deal_room")
+}
+
+model Watchlist {
+  id             String          @id @default(cuid())
+  investisseurId String
+  investisseur   InvestorProfile @relation(fields: [investisseurId], references: [id])
+  startupId      String
+  startup        StartupProfile  @relation(fields: [startupId], references: [id])
+  createdAt      DateTime        @default(now())
+
+  @@unique([investisseurId, startupId])
+  @@map("watchlists")
+}
+
+model Ressource {
+  id                String             @id @default(cuid())
+  titre             String
+  description       String?            @db.Text
+  categorie         CategorieRessource
+  fichierUrl        String
+  tags              Json
+  nbTelechargements Int                @default(0)
+  publieLe          DateTime?
+
+  @@map("ressources")
+}
+
+enum CategorieRessource {
+  BUSINESS_PLAN
+  PITCH_DECK
+  JURIDIQUE
+  FINANCIER
+  REGLEMENTAIRE
+  AUTRE
+}
+
+model Notification {
+  id        String            @id @default(cuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  type      String
+  titre     String
+  message   String            @db.Text
+  lienUrl   String?
+  lu        Boolean           @default(false)
+  canal     CanalNotification
+  createdAt DateTime          @default(now())
+
+  @@map("notifications")
+}
+
+enum CanalNotification {
+  IN_APP
+  EMAIL
+}
+
+model Page {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  titre         String
+  contenu       String    @db.Text
+  publieLe      DateTime?
+  misAJourParId String
+
+  @@map("pages")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  entite    String
+  entiteId  String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}

@@ -21,6 +21,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       return errorResponse('NOT_FOUND', 'Startup introuvable', undefined, 404);
     }
 
+    if (
+      session!.user.role === 'PORTEUR_STARTUP' &&
+      startup.userId !== session!.user.id
+    ) {
+      return errorResponse('FORBIDDEN', 'Accès non autorisé', undefined, 403);
+    }
+
     return successResponse(startup);
   } catch (error: any) {
     return errorResponse('SERVER_ERROR', error.message || 'Erreur interne', undefined, 500);

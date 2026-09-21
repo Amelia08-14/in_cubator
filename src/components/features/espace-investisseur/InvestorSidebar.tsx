@@ -4,11 +4,13 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { Search, Heart, FolderOpen, PieChart, HelpCircle, LogOut, Settings } from "lucide-react";
+
+import { useLogout } from "@/lib/auth-client";
 
 export default function InvestorSidebar() {
   const pathname = usePathname();
+  const logout = useLogout("/connexion");
 
   const navItems = [
     { name: "Explorer", href: "/espace-investisseur", icon: Search, badge: null },
@@ -70,7 +72,7 @@ export default function InvestorSidebar() {
 
         {/* Logout */}
         <button
-          onClick={() => signOut({ callbackUrl: "/connexion" })}
+          onClick={() => void logout()}
           className="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all text-left"
         >
           <LogOut size={18} />

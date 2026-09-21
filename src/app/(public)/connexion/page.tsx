@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+import { authErrorMessage, login, logout } from "@/lib/auth-client";
+import { ROLE_DASHBOARD } from "@/lib/auth-contract";
 
 export default function ConnexionPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,35 +23,30 @@ export default function ConnexionPage() {
     setLoading(true);
 
     try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        loginType: "user",
-        redirect: false,
-      });
+      const user = await login(email, password);
+      const isAdministrative = user.role === "ADMIN" || user.role === "GESTIONNAIRE";
+      const destination = ROLE_DASHBOARD[user.role];
 
-      if (res?.error) {
-        setError("Identifiants incorrects. Veuillez réessayer.");
-        setLoading(false);
+      if (isAdministrative || !destination) {
+        await logout().catch(() => undefined);
+        setError(
+          isAdministrative
+            ? "Utilisez la connexion administrateur pour accéder à cet espace."
+            : "Aucun espace n'est encore disponible pour ce rôle.",
+        );
         return;
       }
 
-      // Fetch session to get role for redirect
-      const sessionRes = await fetch("/api/auth/session");
-      const session = await sessionRes.json();
-      const role = session?.user?.role;
-
-      const dashboardMap: Record<string, string> = {
-        PORTEUR_STARTUP: "/espace",
-        MENTOR_EXPERT: "/espace-mentor",
-        INVESTISSEUR: "/espace-investisseur",
-      };
-
-      const destination = dashboardMap[role] || "/connexion";
       router.push(destination);
       router.refresh();
-    } catch {
-      setError("Une erreur est survenue. Veuillez réessayer.");
+    } catch (caughtError) {
+      setError(
+        authErrorMessage(
+          caughtError,
+          "Une erreur est survenue. Veuillez réessayer.",
+        ),
+      );
+    } finally {
       setLoading(false);
     }
   };

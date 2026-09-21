@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { Mail, Lock, Eye, EyeOff, User, Building2, Loader2, AlertCircle } from "lucide-react";
+
+import { ClientApiError } from "@/lib/api-client-v2";
+import { authErrorMessage, register } from "@/lib/auth-client";
 
 export default function InscriptionPage() {
   const router = useRouter();
@@ -27,34 +29,22 @@ export default function InscriptionPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, accountType }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Une erreur s'est produite lors de l'inscription.");
-      }
-
-      // Auto-login after successful registration
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (result?.error) {
-        throw new Error("Compte créé mais échec de la connexion automatique.");
-      }
-
-      router.push("/espace");
+      await register(formData.email, formData.password);
+      router.push("/candidature/formulaire");
       router.refresh();
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (caughtError) {
+      if (caughtError instanceof ClientApiError && caughtError.fields) {
+        const fieldMessages = Object.values(caughtError.fields).flat();
+        setError(fieldMessages.join(" "));
+      } else {
+        setError(
+          authErrorMessage(
+            caughtError,
+            "Une erreur s'est produite lors de l'inscription.",
+          ),
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -228,6 +218,9 @@ export default function InscriptionPage() {
                   {showPassword ? <EyeOff size={16} strokeWidth={2} /> : <Eye size={16} strokeWidth={2} />}
                 </button>
               </div>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                12 caractères minimum, avec au moins une majuscule, une minuscule et un chiffre.
+              </p>
             </div>
 
             {/* Terms and Conditions */}

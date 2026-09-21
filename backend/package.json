@@ -1,0 +1,50 @@
+{
+  "name": "in-cubator-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "npm run prisma:generate && tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:validate": "prisma validate",
+    "prisma:format": "prisma format",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:status": "prisma migrate status"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mariadb": "^3.4.5",
+    "morgan": "^1.10.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^22.18.0",
+    "prisma": "^7.0.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.0"
+  }
+}

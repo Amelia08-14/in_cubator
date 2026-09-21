@@ -1,0 +1,6 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Adapter l'utilisateur, le nom de base et, si necessaire, les chemins.
+# Les sorties sont envoyees au journal systeme sous le tag ci-dessous.
+17 2 * * * incubator IN_CUBATOR_DB_NAME=in_cubator BACKUP_RETENTION_DAYS=14 /usr/bin/bash /var/www/in-cubator/current/deploy/scripts/backup-mysql.sh 2>&1 | /usr/bin/logger -t in-cubator-mysql-backup

@@ -10,9 +10,9 @@ import ProfileInfoGrid from "@/components/features/vitrine/profile/ProfileInfoGr
 import ProfileContact from "@/components/features/vitrine/profile/ProfileContact";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function StartupProfilePage({ params }: PageProps) {
