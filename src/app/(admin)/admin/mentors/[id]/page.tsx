@@ -9,7 +9,7 @@ import { ChevronLeft, User, Mail, Star, Calendar, Clock, MapPin, Briefcase, Glob
 export default async function AdminMentorDetailPage(
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
+  const session = await auth("admin");
   if (!session || (session.user.role !== "ADMIN" && session.user.role !== "GESTIONNAIRE")) {
     redirect("/admin/connexion");
   }

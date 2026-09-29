@@ -61,6 +61,9 @@ const envSchema = z
 
     ACCESS_COOKIE_NAME: z.string().min(1).default('in_cubator_access'),
     REFRESH_COOKIE_NAME: z.string().min(1).default('in_cubator_refresh'),
+    // Session de l'administration : cookies distincts de ceux des membres.
+    ADMIN_ACCESS_COOKIE_NAME: z.string().min(1).default('in_cubator_admin_access'),
+    ADMIN_REFRESH_COOKIE_NAME: z.string().min(1).default('in_cubator_admin_refresh'),
     REFRESH_COOKIE_PATH: z
       .string()
       .regex(/^\/[a-zA-Z0-9/_-]*$/, 'REFRESH_COOKIE_PATH doit commencer par /.')

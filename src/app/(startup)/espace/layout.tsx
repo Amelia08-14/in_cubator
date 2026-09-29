@@ -32,9 +32,9 @@ export default async function EspaceLayout({
 
   // 3. Allowed to enter the dashboard
   return (
-    <div className="flex min-h-screen bg-[#f8f9fa] font-sans" data-theme="light">
+    <div className="flex min-h-screen flex-col bg-paper font-sans lg:flex-row" data-theme="light">
       <Sidebar />
-      <main className="flex-1 overflow-x-hidden flex flex-col">
+      <main className="flex min-w-0 flex-1 flex-col">
         <ServerHeader />
         <div className="flex-1">
           {children}

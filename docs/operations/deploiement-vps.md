@@ -38,6 +38,7 @@ En production, verifier au minimum :
 - `CORS_ORIGINS=https://in-cubator.example.com` en remplacant le domaine d'exemple ;
 - `COOKIE_SECURE=true`, `COOKIE_SAME_SITE=lax` et, si necessaire, `COOKIE_DOMAIN` ;
 - `REFRESH_COOKIE_PATH=/` pour permettre la validation SSR et le renouvellement client ;
+- `ADMIN_ACCESS_COOKIE_NAME` et `ADMIN_REFRESH_COOKIE_NAME` : cookies de la session de l'administration, distincts de ceux des membres (voir « Sessions séparées ») ;
 - `TRUST_PROXY=1`, car Nginx constitue l'unique proxy de confiance ;
 - `JSON_BODY_LIMIT=1mb`, a augmenter seulement pour un besoin metier mesure.
 
@@ -46,6 +47,16 @@ Next utilise `API_INTERNAL_URL=http://127.0.0.1:4000` pour ses appels serveur et
 Pendant la transition du stockage documentaire, définir `PRIVATE_STORAGE_DIR=/var/lib/in-cubator/documents` dans l'environnement Next, créer ce répertoire avec l'utilisateur applicatif et le mode `0700`, puis l'inclure dans les sauvegardes hors VPS. Ne pas placer ces documents sous `public/`. La cible définitive reste un stockage objet privé avec URLs signées et antivirus.
 
 Durant la migration, les nouveaux appels navigateur emploient `/api/v2/*`; les appels historiques restent sous `/api/*`. Apres le cutover complet, le contrat public convergera vers `/api/*` directement servi par Express.
+
+## Sessions separees : administration et espace membre
+
+L'administration (`/admin`) et l'espace membre (startups, mentors, investisseurs) ont chacun leur session, avec leurs propres cookies (`in_cubator_admin_*` et `in_cubator_*`). On peut donc etre connecte aux deux dans le meme navigateur sans qu'ils se melangent.
+
+- La connexion de l'equipe passe par `POST /api/auth/admin/login` (page `/admin/connexion`) et n'accepte que les roles `ADMIN` et `GESTIONNAIRE`. La connexion membre (`/api/auth/login`) refuse ces roles.
+- Le client indique l'espace par l'en-tete `X-Auth-Realm: admin` ; sans lui, l'API lit la session membre. L'API verifie en plus que le role du compte appartient a l'espace demande : un jeton ne franchit jamais la frontiere.
+- Le proxy Next (`src/proxy.ts`) n'examine que les cookies de l'espace concerne.
+- Aucun lien vers `/admin` n'est expose sur le site public : l'acces se fait par l'URL directe. Pour aller plus loin, on peut restreindre `/admin` par IP ou l'exposer sur un sous-domaine dans Nginx sans modifier l'application.
+- Apres ce changement, les administrateurs deja connectes doivent se reconnecter une fois.
 
 ## Premier demarrage PM2
 

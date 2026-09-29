@@ -25,3 +25,21 @@ export const authRateLimiter = rateLimit({
   skipSuccessfulRequests: false,
   message: rateLimitBody,
 });
+
+// Formulaire public de contact : peu de demandes légitimes par adresse IP.
+export const publicLeadRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 8,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: rateLimitBody,
+});
+
+// Inscription publique à un évènement : quelques inscriptions légitimes par IP et par heure.
+export const publicEventRegistrationRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 15,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: rateLimitBody,
+});

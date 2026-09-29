@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Plus, Check, Clock, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { realmFetch } from "@/lib/realm-fetch";
 interface Task {
   id: string;
   titre: string;
@@ -38,7 +39,7 @@ export default function AdminStartupRoadmap({ startupId, initialObjectifs }: Pro
     if (!newObjTitre.trim()) return;
 
     try {
-      const res = await fetch(`/api/startups/${startupId}/objectifs`, {
+      const res = await realmFetch(`/api/startups/${startupId}/objectifs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ titre: newObjTitre })
@@ -62,7 +63,7 @@ export default function AdminStartupRoadmap({ startupId, initialObjectifs }: Pro
     if (!newTaskTitre.trim()) return;
 
     try {
-      const res = await fetch(`/api/startups/${startupId}/objectifs/${objectifId}/taches`, {
+      const res = await realmFetch(`/api/startups/${startupId}/objectifs/${objectifId}/taches`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ titre: newTaskTitre })

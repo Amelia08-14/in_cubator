@@ -1,82 +1,86 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
-import { authErrorMessage, login, logout } from "@/lib/auth-client";
+import { adminLogin, authErrorMessage } from "@/lib/auth-client";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const user = await login(email, password);
-
-      if (user.role !== "ADMIN" && user.role !== "GESTIONNAIRE") {
-        await logout().catch(() => undefined);
-        setError("Identifiants incorrects ou accès non autorisé");
-        return;
-      }
+      // La route dédiée refuse tout compte qui n'appartient pas à l'équipe.
+      await adminLogin(email, password);
 
       router.push("/admin");
       router.refresh();
     } catch (caughtError) {
-      setError(
-        authErrorMessage(
-          caughtError,
-          "Identifiants incorrects ou accès non autorisé",
-        ),
-      );
+      setError(authErrorMessage(caughtError, "Identifiants incorrects ou accès non autorisé"));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-      <div className="max-w-md w-full p-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700">
-        <h1 className="text-2xl font-bold text-center mb-6 text-slate-900 dark:text-white">
-          Accès Administrateur
-        </h1>
+    <div className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-paper px-5 py-16">
+      <div
+        aria-hidden
+        className="absolute inset-y-0 right-0 -z-10 w-[55%] bg-paper-deep"
+        style={{ clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0 100%)" }}
+      />
+      <div className="facet-tr w-full max-w-md bg-white p-8 shadow-deep sm:p-10">
+        <Image src="/logo.png" alt="IN-CUBATOR" width={170} height={54} className="h-11 w-auto" priority />
+        <h1 className="mt-7 font-serif text-3xl font-extrabold text-violet-dark">Accès administrateur</h1>
+        <p className="mt-2 text-gray-main">Réservé à l&apos;équipe IN-CUBATOR.</p>
+
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+          <p role="alert" className="mt-6 border border-orange-accent/40 bg-orange-accent/10 px-4 py-3 text-sm font-semibold text-orange-deep">
             {error}
-          </div>
+          </p>
         )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Email
-            </label>
+
+        <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-bold text-violet-dark">Email</span>
             <input
               type="email"
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+              autoComplete="username"
+              className="field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Mot de passe
-            </label>
+          </label>
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-bold text-violet-dark">Mot de passe</span>
             <input
               type="password"
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+              autoComplete="current-password"
+              className="field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-          >
-            Se connecter
+          </label>
+          <button type="submit" disabled={loading} className="btn btn-violet w-full !py-4 disabled:opacity-60">
+            {loading ? (
+              <>
+                <Loader2 size={17} className="animate-spin" /> Connexion…
+              </>
+            ) : (
+              "Se connecter"
+            )}
           </button>
         </form>
       </div>

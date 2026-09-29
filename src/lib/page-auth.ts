@@ -9,7 +9,9 @@ export async function requirePageRoles(
   allowedRoles: readonly AppRole[],
   loginPath = "/connexion",
 ) {
-  const session = await auth();
+  // Les pages réservées à l'équipe lisent la session de l'administration.
+  const realm = allowedRoles.some((role) => role === "ADMIN" || role === "GESTIONNAIRE") ? "admin" : "member";
+  const session = await auth(realm);
 
   if (!session?.user) {
     redirect(loginPath);

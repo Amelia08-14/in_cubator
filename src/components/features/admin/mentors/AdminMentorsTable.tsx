@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { realmFetch } from "@/lib/realm-fetch";
 interface MentorData {
   id: string;
   name: string;
@@ -30,7 +31,7 @@ export default function AdminMentorsTable({ mentors = [] }: { mentors?: MentorDa
     
     try {
       const newStatus = mentor.status === 'Actif' ? false : true;
-      const res = await fetch(`/api/admin/mentors/${mentor.id}`, {
+      const res = await realmFetch(`/api/admin/mentors/${mentor.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ actif: newStatus })

@@ -1,60 +1,350 @@
 @import "tailwindcss";
 
+/*
+  IN-CUBATOR — système de design de la famille IN (La Maison IN Groupe).
+  Sources : logo IN-CUBATOR (Roboto Slab, cube ouvert bleu/violet/orange) et
+  catalogue IN NETWORK V3. Les anciens noms de tokens (violet-main, warm-cream…)
+  sont conservés comme alias pour que les espaces existants suivent la charte.
+*/
+
+@theme {
+  /* Violets — le socle de la marque */
+  --color-violet-ink: #1f1230;
+  --color-violet-deep: #2c1a40;
+  --color-violet-dark: #3e2a57;
+  --color-violet-mid: #5a3a7c;
+  --color-violet-main: #964594;
+  --color-violet-soft: #e6d9ef;
+
+  /* Accents du logo */
+  --color-orange-accent: #d44835;
+  --color-orange-deep: #b23a29;
+  --color-orange-light: #ff9682;
+  --color-blue-main: #1f5aa6;
+  --color-blue-deep: #143f78;
+
+  /* Compléments de la charte IN */
+  --color-green-light: #c0d5a9;
+  --color-green-main: #4f9a52;
+  --color-yellow-orange: #ffc25a;
+
+  /* Beiges : le fond du site. Du plus clair au plus profond. */
+  --color-cream: #fbf7ef;
+  --color-paper: #f5eee3;
+  --color-paper-deep: #ebe1d0;
+  --color-sand: #ddd0bb;
+  --color-warm-cream: #f5eee3;
+  --color-card-white: #ffffff;
+
+  /* Encres : violet-brun, jamais un gris neutre */
+  --color-ink: #2a1d33;
+  --color-gray-main: #5d5361;
+  --color-line: #dccfba;
+
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-roboto-slab), Georgia, serif;
+  --font-display: var(--font-roboto-slab), Georgia, serif;
+
+  --shadow-lift: 0 1px 2px rgb(62 42 87 / 0.06), 0 14px 30px -12px rgb(74 52 40 / 0.28);
+  --shadow-deep: 0 2px 4px rgb(62 42 87 / 0.08), 0 30px 60px -22px rgb(74 52 40 / 0.5);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Rayons : la famille IN est angulaire. Les interfaces existantes (espaces
+     startup, mentor, investisseur, admin) utilisent rounded-xl/2xl/3xl ; on
+     resserre ces rayons ici plutôt que de réécrire chaque composant. */
+  --radius-sm: 0.15rem;
+  --radius-md: 0.2rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.3rem;
+  --radius-2xl: 0.35rem;
+  --radius-3xl: 0.4rem;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --color-violet-principal: #964594;
-  --color-orange-accent: #D44835;
-  --color-bleu: #235BA8;
-  --color-violet-fonce: #47295C;
-  --color-vert-clair: #C0D5A9;
-  --color-jaune-orange: #FFC25A;
-  --color-vert: #73B866;
-  --color-gris: #7A7A7A;
-
-  /* Warm neutral background, close to the in-network.dz sibling site —
-     never a stark/pastel white. */
-  --color-creme-chaud: #FAF6EF;
-  --color-creme-carte: #FFFFFF;
+  color-scheme: light;
+  --background: #f5eee3;
+  --foreground: #21172e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-montserrat), Helvetica, Arial, sans-serif;
-  --font-serif: var(--font-montserrat), Helvetica, Arial, sans-serif;
-  --color-violet-main: var(--color-violet-principal);
-  --color-orange-accent: var(--color-orange-accent);
-  --color-blue-main: var(--color-bleu);
-  --color-violet-dark: var(--color-violet-fonce);
-  --color-green-light: var(--color-vert-clair);
-  --color-yellow-orange: var(--color-jaune-orange);
-  --color-green-main: var(--color-vert);
-  --color-gray-main: var(--color-gris);
-  --color-warm-cream: var(--color-creme-chaud);
-  --color-card-white: var(--color-creme-carte);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--background);
+  scroll-padding-top: 5.5rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.bg-pattern {
-  background-image: url('/background.svg');
-  background-repeat: repeat;
-  background-size: 350px;
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Surfaces du navigateur que la charte reprend ------------------------------ */
+
+::selection {
+  background: var(--color-orange-accent);
+  color: #fff;
 }
 
 ::placeholder {
-  color: #9ca3af;
+  color: #8d8190;
   opacity: 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-orange-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--color-orange-accent);
+}
+
+html {
+  scrollbar-color: var(--color-violet-mid) var(--color-paper-deep);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-paper-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-violet-mid);
+  border-radius: 10px;
+  border: 2px solid var(--color-paper-deep);
+}
+
+.tabular,
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Formes de la famille IN : facettes angulaires et hexagones ----------------- */
+
+/* Coin supérieur droit coupé en biseau, comme les blocs violets du catalogue */
+.facet-tr {
+  clip-path: polygon(0 0, calc(100% - 3.5rem) 0, 100% 3.5rem, 100% 100%, 0 100%);
+}
+.facet-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 3.5rem 100%, 0 calc(100% - 3.5rem));
+}
+.facet-both {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 3.5rem) 0,
+    100% 3.5rem,
+    100% 100%,
+    3.5rem 100%,
+    0 calc(100% - 3.5rem)
+  );
+}
+.facet-photo {
+  clip-path: polygon(14% 0, 100% 0, 100% 86%, 86% 100%, 0 100%, 0 14%);
+}
+.hex {
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+
+/* Motif de fond : le cube ouvert du logo, répété très discrètement */
+.bg-cubes {
+  background-image: url("/background.svg");
+  background-size: 360px;
+  background-repeat: repeat;
+}
+
+/* Ligne d'aération à l'endroit où le violet coupe le papier */
+.rule-violet {
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-violet-dark), transparent);
+}
+
+/* Boutons de la famille IN ---------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  border-radius: 2px;
+  transition:
+    transform 0.35s var(--ease-out-expo),
+    background-color 0.25s,
+    color 0.25s,
+    box-shadow 0.35s var(--ease-out-expo);
+  clip-path: polygon(0 0, calc(100% - 0.7rem) 0, 100% 0.7rem, 100% 100%, 0.7rem 100%, 0 calc(100% - 0.7rem));
+  cursor: pointer;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn-primary {
+  background: var(--color-orange-accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--color-orange-deep);
+}
+.btn-violet {
+  background: var(--color-violet-dark);
+  color: #fff;
+}
+.btn-violet:hover {
+  background: var(--color-violet-mid);
+}
+.btn-sand {
+  background: var(--color-paper-deep);
+  color: var(--color-violet-dark);
+}
+.btn-sand:hover {
+  background: var(--color-sand);
+}
+.btn-ghost-light {
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.45);
+}
+.btn-ghost-light:hover {
+  background: rgb(255 255 255 / 0.2);
+}
+.btn-ghost-dark {
+  background: transparent;
+  color: var(--color-violet-dark);
+  box-shadow: inset 0 0 0 1.5px var(--color-violet-dark);
+}
+.btn-ghost-dark:hover {
+  background: var(--color-violet-dark);
+  color: #fff;
+}
+
+/* Champs de formulaire publics */
+.field {
+  width: 100%;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-sand);
+  border-radius: 2px;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.field:hover {
+  border-color: var(--color-violet-mid);
+}
+.field:focus-visible {
+  outline: none;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--color-violet-dark);
+  box-shadow: 0 0 0 3px rgb(150 69 148 / 0.22);
+}
+
+/* Mouvement ------------------------------------------------------------------ */
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+.animate-drift {
+  animation: drift 7s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Lenis (défilement lissé) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sur mobile, la barre supérieure des espaces connectés reste fixe : les
+   en-têtes collants des pages se calent juste dessous. */
+@media (max-width: 1023.98px) {
+  main .sticky.top-0 {
+    top: 3.5rem;
+  }
 }

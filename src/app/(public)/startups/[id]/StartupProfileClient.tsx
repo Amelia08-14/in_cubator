@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Lock, Loader2, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Lock, Loader2, CheckCircle } from "lucide-react";
 
 interface Props {
   startupId: string;
@@ -48,7 +49,7 @@ export default function StartupProfileClient({
       } else {
         setRequestStatus("SUCCESS");
       }
-    } catch (err) {
+    } catch {
       setErrorMsg("Une erreur est survenue.");
     } finally {
       setIsRequesting(false);
@@ -56,81 +57,91 @@ export default function StartupProfileClient({
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header Profile */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-8 md:p-12 shadow-sm mb-8 relative overflow-hidden">
-          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center relative z-10">
-            <div className="w-32 h-32 rounded-2xl bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200 overflow-hidden shadow-inner">
+    <main>
+      <section className="relative isolate overflow-hidden bg-paper pb-16 pt-36 text-violet-dark lg:pb-24 lg:pt-44">
+        <div
+          aria-hidden
+          className="absolute right-0 top-0 -z-10 h-full w-[40%] bg-paper-deep"
+          style={{ clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0 100%)" }}
+        />
+        <div className="mx-auto w-full max-w-[1100px] px-5 sm:px-8">
+          <Link href="/startups" className="inline-flex items-center gap-2 text-sm font-bold text-gray-main transition-colors hover:text-violet-dark">
+            <ArrowLeft size={16} /> Toutes les startups
+          </Link>
+          <div className="mt-8 flex flex-col items-start gap-8 md:flex-row md:items-center">
+            <div className="hex relative flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden bg-violet-dark">
               {logoUrl ? (
-                <img src={logoUrl} alt={nom} className="w-full h-full object-cover" />
+                // Les logos sont téléversés par les startups : origine et dimensions inconnues.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logoUrl} alt={`Logo de ${nom}`} className="h-full w-full object-cover" />
               ) : (
-                <span className="text-4xl font-black text-gray-300">{nom.charAt(0)}</span>
+                <span className="font-serif text-5xl font-bold text-white">{nom.charAt(0).toUpperCase()}</span>
               )}
             </div>
-            
-            <div className="flex-1">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{nom}</h1>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {secteurs.map((secteur, i) => (
-                  <span key={i} className="px-3 py-1 bg-[#47295C]/10 text-[#47295C] rounded-full text-xs font-bold">
-                    {secteur}
-                  </span>
-                ))}
-              </div>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                {pitchResume || "Aucune description fournie."}
-              </p>
+            <div>
+              <h1 className="font-serif text-4xl font-extrabold leading-tight tracking-[-0.02em] sm:text-5xl">{nom}</h1>
+              {secteurs.length > 0 && (
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {secteurs.map((secteur) => (
+                    <li key={secteur} className="border border-violet-dark/30 px-3 py-1 text-xs font-bold text-violet-dark">
+                      {secteur}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Deal Room Access Action */}
-        <div className="bg-gradient-to-br from-[#47295C] to-[#2b10ac] rounded-3xl p-8 md:p-12 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="max-w-xl">
-            <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
-              <Lock className="text-[#964594]" /> 
-              Deal Room Privée
+      <section className="bg-cream py-16 lg:py-20">
+        <div className="mx-auto grid w-full max-w-[1100px] gap-12 px-5 sm:px-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div>
+            <h2 className="font-serif text-3xl font-bold text-violet-dark">Le projet</h2>
+            <p className="mt-5 text-lg leading-relaxed text-gray-main">
+              {pitchResume || "La startup n'a pas encore publié de présentation."}
+            </p>
+          </div>
+
+          <aside className="facet-tr h-fit bg-violet-dark p-8 text-white">
+            <h2 className="flex items-center gap-3 font-serif text-2xl font-bold">
+              <Lock size={22} className="text-orange-accent" /> Deal Room privée
             </h2>
-            <p className="text-white/80 text-lg leading-relaxed mb-2">
-              Accédez au Pitch Deck, Business Plan, KPIs et informations financières de {nom}.
+            <p className="mt-4 leading-relaxed text-white/80">
+              Pitch deck, business plan, KPIs et informations financières de {nom}, accessibles sur demande.
             </p>
             {!isInvestor && (
-              <p className="text-[#964594] text-sm font-bold bg-[#964594]/20 inline-block px-3 py-1 rounded">
+              <p className="mt-4 inline-block bg-white/12 px-3 py-1.5 text-sm font-bold text-white">
                 Réservé aux investisseurs inscrits.
               </p>
             )}
-          </div>
-          
-          <div className="shrink-0 w-full md:w-auto">
-            {requestStatus === "SUCCESS" ? (
-              <div className="bg-white/10 border border-white/20 rounded-xl p-4 flex items-center justify-center gap-3 w-full">
-                <CheckCircle className="text-green-400" />
-                <span className="font-bold text-white">Demande envoyée</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-end">
-                <button 
-                  onClick={handleRequestAccess}
-                  disabled={isRequesting || !isInvestor}
-                  className={`w-full md:w-auto px-8 py-4 rounded-xl font-bold text-lg shadow-md transition-all flex items-center justify-center gap-2 ${
-                    !isInvestor ? "bg-white/20 text-white/50 cursor-not-allowed" :
-                    isRequesting ? "bg-white text-[#47295C] opacity-80 cursor-wait" : "bg-white text-[#47295C] hover:bg-gray-50 hover:scale-105"
-                  }`}
-                >
-                  {isRequesting ? <Loader2 className="animate-spin" /> : null}
-                  Demander l'accès
-                </button>
-                {errorMsg && (
-                  <p className="text-red-300 text-sm font-medium mt-2">{errorMsg}</p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
 
-      </div>
-    </div>
+            <div className="mt-7">
+              {requestStatus === "SUCCESS" ? (
+                <p role="status" className="flex items-center gap-3 border border-white/25 bg-white/10 p-4 font-bold">
+                  <CheckCircle className="text-green-light" /> Demande envoyée
+                </p>
+              ) : (
+                <>
+                  <button
+                    onClick={handleRequestAccess}
+                    disabled={isRequesting || !isInvestor}
+                    className="btn btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isRequesting && <Loader2 size={17} className="animate-spin" />}
+                    Demander l&apos;accès
+                  </button>
+                  {errorMsg && (
+                    <p role="alert" className="mt-3 text-sm font-semibold text-[#ffb4a8]">
+                      {errorMsg}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
   );
 }

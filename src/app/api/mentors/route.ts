@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { successResponse, errorResponse } from "@/lib/api-utils";
 import { auth } from "@/auth";
+import { currentRealm } from "@/lib/realm";
 
 
 export async function GET(request: Request) {
   try {
-    const session = await auth();
+    const session = await auth(await currentRealm());
     const { searchParams } = new URL(request.url);
     
     const secteur = searchParams.get('secteur');

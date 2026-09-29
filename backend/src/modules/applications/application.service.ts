@@ -1,6 +1,7 @@
 import { AppError } from '../../errors/app-error.js';
 import { Prisma } from '../../generated/prisma/client.js';
 import { prisma } from '../../lib/prisma.js';
+import { syncLeadFromApplication } from '../crm/crm.service.js';
 import type {
   AdminApplicationListQuery,
   ApplicationDecisionInput,
@@ -133,7 +134,25 @@ function startupPatchData(
   };
 }
 
+// Le CRM suit chaque candidature comme un lead, sans jamais bloquer le flux métier.
+async function syncCrm(applicationId: string): Promise<void> {
+  try {
+    await syncLeadFromApplication(applicationId);
+  } catch (error) {
+    console.error('CRM: synchronisation du lead impossible', error);
+  }
+}
+
 export async function createOwnApplication(
+  userId: string,
+  input: CreateApplicationInput,
+): Promise<OwnApplication> {
+  const created = await createOwnApplicationTransaction(userId, input);
+  await syncCrm(created.id);
+  return created;
+}
+
+async function createOwnApplicationTransaction(
   userId: string,
   input: CreateApplicationInput,
 ): Promise<OwnApplication> {
@@ -363,6 +382,16 @@ export async function getApplicationForAdmin(
 }
 
 export async function decideApplication(
+  applicationId: string,
+  evaluatorId: string,
+  input: ApplicationDecisionInput,
+): Promise<AdminApplicationDetail> {
+  const decided = await decideApplicationTransaction(applicationId, evaluatorId, input);
+  await syncCrm(applicationId);
+  return decided;
+}
+
+async function decideApplicationTransaction(
   applicationId: string,
   evaluatorId: string,
   input: ApplicationDecisionInput,

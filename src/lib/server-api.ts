@@ -1,6 +1,7 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { authCookieHeader } from "@/lib/realm";
+import { REALM_HEADER, type AuthRealm } from "@/lib/realm-shared";
 
 type ApiErrorPayload = {
   code: string;
@@ -48,21 +49,24 @@ async function parseResponse<T>(response: Response): Promise<T> {
  * It forwards the auth cookies. Server Components may validate the refresh
  * session but never rotate it because they cannot propagate Set-Cookie.
  */
+export type ServerApiInit = RequestInit & {
+  /** Session utilisée : « member » par défaut, « admin » pour l'administration. */
+  realm?: AuthRealm;
+};
+
 export async function serverApi<T>(
   path: string,
-  init: RequestInit = {},
+  { realm = "member", ...init }: ServerApiInit = {},
 ): Promise<T> {
-  const cookieStore = await cookies();
-  const authCookies = ["in_cubator_access", "in_cubator_refresh"]
-    .map((name) => cookieStore.get(name))
-    .filter((cookie): cookie is NonNullable<typeof cookie> => Boolean(cookie))
-    .map((cookie) => `${cookie.name}=${encodeURIComponent(cookie.value)}`)
-    .join("; ");
+  const authCookies = await authCookieHeader(realm);
   const headers = new Headers(init.headers);
 
   headers.set("accept", "application/json");
   if (authCookies) {
     headers.set("cookie", authCookies);
+  }
+  if (realm === "admin") {
+    headers.set(REALM_HEADER, "admin");
   }
 
   const response = await fetch(new URL(path, getApiOrigin()), {
@@ -72,6 +76,11 @@ export async function serverApi<T>(
   });
 
   return parseResponse<T>(response);
+}
+
+/** Appel authentifié avec la session de l'administration. */
+export function adminApi<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return serverApi<T>(path, { ...init, realm: "admin" });
 }
 
 /**

@@ -1,78 +1,37 @@
 import React from "react";
-import { FileText, Users, Coins, UserCircle, Info } from "lucide-react";
+import Link from "next/link";
 
 interface AdminKPIsProps {
   candidaturesCount: number;
   startupsCount: number;
   mentorsCount: number;
-  fondsLeves?: string;
+  openLeads?: number | null;
 }
 
-export default function AdminKPIs({ 
-  candidaturesCount, 
-  startupsCount, 
-  mentorsCount,
-  fondsLeves = "0 DZD"
-}: AdminKPIsProps) {
+export default function AdminKPIs({ candidaturesCount, startupsCount, mentorsCount, openLeads }: AdminKPIsProps) {
   const kpis = [
-    {
-      id: 1,
-      title: "Candidatures en attente",
-      value: candidaturesCount.toString(),
-      subtitle: "Mise à jour en direct",
-      icon: <FileText size={20} className="text-[#47295C]" />,
-      iconBg: "bg-[#f1edfa]",
-      borderColor: "border-b-[#47295C]",
-    },
-    {
-      id: 2,
-      title: "Startups Actives",
-      value: startupsCount.toString(),
-      subtitle: "Sur la plateforme",
-      icon: <Users size={20} className="text-green-600" />,
-      iconBg: "bg-green-50",
-      borderColor: "border-b-green-600",
-    },
-    {
-      id: 3,
-      title: "Fonds Levés (Global)",
-      value: fondsLeves,
-      subtitle: "Estimation basée sur les données",
-      icon: <Coins size={20} className="text-blue-600" />,
-      iconBg: "bg-blue-50",
-      borderColor: "border-b-blue-600",
-    },
-    {
-      id: 4,
-      title: "Mentors Actifs",
-      value: mentorsCount.toString(),
-      subtitle: "Disponibles pour sessions",
-      icon: <UserCircle size={20} className="text-orange-500" />,
-      iconBg: "bg-orange-50",
-      borderColor: "border-b-orange-500",
-    }
+    { title: "Candidatures à évaluer", value: candidaturesCount, hint: "En attente de décision", href: "/admin/candidatures", accent: "#d44835" },
+    { title: "Startups sur la plateforme", value: startupsCount, hint: "Profils créés", href: "/admin/startups", accent: "#964594" },
+    { title: "Mentors actifs", value: mentorsCount, hint: "Disponibles pour des sessions", href: "/admin/mentors", accent: "#1f5aa6" },
+    ...(openLeads != null
+      ? [{ title: "Leads ouverts", value: openLeads, hint: "Dans le pipeline CRM", href: "/admin/crm", accent: "#3e2a57" }]
+      : []),
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <dl className="mb-8 grid grid-cols-1 border border-line bg-white sm:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-line">
       {kpis.map((kpi) => (
-        <div 
-          key={kpi.id} 
-          className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-6 relative overflow-hidden border-b-4 ${kpi.borderColor} flex items-start gap-4`}
+        <Link
+          key={kpi.title}
+          href={kpi.href}
+          className="group relative block border-b border-line px-6 py-5 transition-colors hover:bg-paper/70 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:border-b-0"
         >
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${kpi.iconBg}`}>
-            {kpi.icon}
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 mb-1">
-              <h3 className="text-sm font-semibold text-gray-700">{kpi.title}</h3>
-              <Info size={12} className="text-gray-400 cursor-help" />
-            </div>
-            <p className="text-2xl font-bold text-gray-900 mb-1">{kpi.value}</p>
-            <p className="text-[11px] text-gray-500 font-medium">{kpi.subtitle}</p>
-          </div>
-        </div>
+          <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-[0.28] transition-transform duration-500 group-hover:scale-x-100" style={{ background: kpi.accent }} />
+          <dt className="text-[0.72rem] font-bold uppercase tracking-wide text-gray-main">{kpi.title}</dt>
+          <dd className="tabular mt-2 font-serif text-[2.2rem] font-extrabold leading-none text-violet-dark">{kpi.value}</dd>
+          <p className="mt-2 text-sm text-gray-main">{kpi.hint}</p>
+        </Link>
       ))}
-    </div>
+    </dl>
   );
 }

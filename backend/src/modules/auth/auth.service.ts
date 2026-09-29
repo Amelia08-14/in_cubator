@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 
 import { env } from '../../config/env.js';
+import { roleBelongsToRealm, type AuthRealm } from '../../config/realm.js';
 import { AppError } from '../../errors/app-error.js';
 import { Prisma } from '../../generated/prisma/client.js';
 import { prisma } from '../../lib/prisma.js';
@@ -133,7 +134,11 @@ export async function register(input: RegisterInput, metadata: SessionMetadata):
   });
 }
 
-export async function login(input: LoginInput, metadata: SessionMetadata): Promise<AuthSession> {
+export async function login(
+  input: LoginInput,
+  metadata: SessionMetadata,
+  realm: AuthRealm = 'member',
+): Promise<AuthSession> {
   const userWithPassword = await prisma.user.findUnique({
     where: { email: input.email },
     select: loginUserSelect,
@@ -149,6 +154,16 @@ export async function login(input: LoginInput, metadata: SessionMetadata): Promi
   }
 
   const { passwordHash: _passwordHash, ...user } = userWithPassword;
+
+  if (!roleBelongsToRealm(user.role, realm)) {
+    // Connexion membre avec un compte d'équipe : on l'indique clairement.
+    // Connexion administration avec un compte membre : message générique, pour
+    // ne pas révéler que le compte existe.
+    throw realm === 'member'
+      ? AppError.forbidden("Ce compte est réservé à l'administration. Utilisez la connexion administrateur.")
+      : AppError.unauthorized('Adresse e-mail ou mot de passe incorrect.');
+  }
+
   return createSession(user, metadata);
 }
 
@@ -194,15 +209,27 @@ async function validateRefreshSession(presentedToken: string) {
   return { currentSession, presentedHash };
 }
 
-export async function getCurrentSessionUser(presentedToken: string): Promise<PublicUser> {
-  return (await validateRefreshSession(presentedToken)).currentSession.user;
+export async function getCurrentSessionUser(
+  presentedToken: string,
+  realm: AuthRealm = 'member',
+): Promise<PublicUser> {
+  const { user } = (await validateRefreshSession(presentedToken)).currentSession;
+  if (!roleBelongsToRealm(user.role, realm)) {
+    throw AppError.unauthorized('Session invalide pour cet espace.');
+  }
+  return user;
 }
 
 export async function refreshSession(
   presentedToken: string,
   metadata: SessionMetadata,
+  realm: AuthRealm = 'member',
 ): Promise<AuthSession> {
   const { currentSession, presentedHash } = await validateRefreshSession(presentedToken);
+
+  if (!roleBelongsToRealm(currentSession.user.role, realm)) {
+    throw AppError.unauthorized('Session invalide pour cet espace.');
+  }
 
   const nextTokens = newSessionTokens(currentSession.user);
   const safeMetadata = sanitizeMetadata(metadata);

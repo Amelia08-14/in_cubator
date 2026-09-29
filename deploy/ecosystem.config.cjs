@@ -1,5 +1,11 @@
 const path = require('node:path');
 
+// Ports internes : plusieurs sites partagent le VPS, on les choisit donc à
+// l'installation (IN_CUBATOR_WEB_PORT / IN_CUBATOR_API_PORT) après avoir vérifié
+// qu'ils sont libres. Ils écoutent uniquement sur 127.0.0.1.
+const webPort = process.env.IN_CUBATOR_WEB_PORT || '3000';
+const apiPort = process.env.IN_CUBATOR_API_PORT || '4000';
+
 const appRoot = path.resolve(
   process.env.IN_CUBATOR_ROOT || '/var/www/in-cubator/current',
 );
@@ -10,7 +16,7 @@ module.exports = {
       name: 'in-cubator-web',
       cwd: appRoot,
       script: './node_modules/next/dist/bin/next',
-      args: 'start --hostname 127.0.0.1 --port 3000',
+      args: `start --hostname 127.0.0.1 --port ${webPort}`,
       interpreter: 'node',
       instances: 1,
       exec_mode: 'fork',
@@ -25,11 +31,13 @@ module.exports = {
       merge_logs: true,
       env_production: {
         NODE_ENV: 'production',
-        PORT: '3000',
+        PORT: webPort,
         HOSTNAME: '127.0.0.1',
-        API_INTERNAL_URL: 'http://127.0.0.1:4000',
+        API_INTERNAL_URL: `http://127.0.0.1:${apiPort}`,
         PRIVATE_STORAGE_DIR:
           process.env.PRIVATE_STORAGE_DIR || '/var/lib/in-cubator/documents',
+        PUBLIC_MEDIA_DIR:
+          process.env.PUBLIC_MEDIA_DIR || '/var/lib/in-cubator/media',
       },
     },
     {
@@ -52,7 +60,7 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production',
         HOST: '127.0.0.1',
-        PORT: '4000',
+        PORT: apiPort,
         API_PREFIX: '/api',
         TRUST_PROXY: '1',
       },

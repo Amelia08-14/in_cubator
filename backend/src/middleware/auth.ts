@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import { env } from '../config/env.js';
+import { cookieNamesFor, realmOfRequest, roleBelongsToRealm } from '../config/realm.js';
 import { AppError } from '../errors/app-error.js';
 import type { Role } from '../generated/prisma/enums.js';
 import { prisma } from '../lib/prisma.js';
@@ -14,7 +14,8 @@ function readCookie(request: Parameters<RequestHandler>[0], name: string): strin
 
 export const requireAuth: RequestHandler = async (request, _response, next) => {
   try {
-    const token = readCookie(request, env.ACCESS_COOKIE_NAME);
+    const realm = realmOfRequest(request);
+    const token = readCookie(request, cookieNamesFor(realm).access);
     if (!token) {
       throw AppError.unauthorized();
     }
@@ -27,6 +28,11 @@ export const requireAuth: RequestHandler = async (request, _response, next) => {
 
     if (!user?.actif) {
       throw AppError.unauthorized('Compte introuvable ou desactive.');
+    }
+
+    // Un jeton ne franchit jamais la frontière membre / administration.
+    if (!roleBelongsToRealm(user.role, realm)) {
+      throw AppError.forbidden('Ce compte ne peut pas utiliser cet espace.');
     }
 
     request.auth = {

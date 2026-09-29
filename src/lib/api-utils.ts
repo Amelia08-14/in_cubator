@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { currentRealm } from "@/lib/realm";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 
@@ -34,7 +35,7 @@ export function errorResponse(code: string, message: string, fields?: Record<str
  * @returns The session if authorized, or a NextResponse with 401/403 error.
  */
 export async function requireRole(allowedRoles: Role[]) {
-  const session = await auth();
+  const session = await auth(await currentRealm());
 
   if (!session?.user) {
     return {

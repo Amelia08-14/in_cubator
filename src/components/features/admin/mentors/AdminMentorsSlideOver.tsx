@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { X, Loader2, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { realmFetch } from "@/lib/realm-fetch";
 interface AdminMentorsSlideOverProps {
   isOpen: boolean;
   onClose: () => void;
@@ -58,7 +59,7 @@ export default function AdminMentorsSlideOver({ isOpen, onClose }: AdminMentorsS
       const secteursArray = secteurs;
       const languesArray = langues.split(",").map(s => s.trim()).filter(Boolean);
 
-      const res = await fetch("/api/admin/mentors", {
+      const res = await realmFetch("/api/admin/mentors", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

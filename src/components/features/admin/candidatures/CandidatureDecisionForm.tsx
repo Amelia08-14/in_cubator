@@ -9,6 +9,7 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { realmFetch } from "@/lib/realm-fetch";
 const decisionSchema = z.object({
   decision: z.enum(["Accepté", "Entretien éventuel", "Liste d'attente", "Refusé"], {
     required_error: "Veuillez sélectionner une décision.",
@@ -74,7 +75,7 @@ export default function CandidatureDecisionForm({ candidature }: { candidature: 
         bodyData.motifDecision = data.motif;
       }
 
-      const res = await fetch(`/api/candidatures/${candidature.id}`, {
+      const res = await realmFetch(`/api/candidatures/${candidature.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyData)

@@ -1,84 +1,100 @@
-import React from "react";
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { Search, MapPin, Target } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
+import { prisma } from "@/lib/prisma";
+import PageHero from "@/components/brand/PageHero";
+
+export const metadata: Metadata = {
+  title: "Startups accompagnées",
+  description: "Les startups du programme IN-CUBATOR, visibles des investisseurs et des partenaires.",
+};
+export const dynamic = "force-dynamic";
+
+const STADE: Record<string, string> = {
+  IDEE: "Idée",
+  PROTOTYPE: "Prototype",
+  EARLY_TRACTION: "Premières traction",
+  SCALE: "Croissance",
+};
 
 export default async function PublicStartupsDirectory() {
   const startups = await prisma.startupProfile.findMany({
     where: { visiblePublic: true },
-    include: {
-      user: true, // We might need email?
-    },
-    orderBy: { nom: 'asc' }
+    orderBy: { nom: "asc" },
   });
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">
-            Découvrez nos <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#47295C] to-[#964594]">startups incubées</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Explorez les projets innovants qui façonnent l'avenir et connectez-vous avec leurs fondateurs.
-          </p>
-        </div>
+    <main>
+      <PageHero
+        title={<>Les startups qui avancent avec nous<span className="text-orange-accent">.</span></>}
+        text="Explorez les projets accompagnés par le programme et connectez-vous avec leurs fondateurs."
+        image={{ src: "/photos/gen/startups.webp", alt: "Des mains tiennent un prototype électronique dans un atelier de startup" }}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {startups.map((startup) => {
-            const secteurs = Array.isArray(startup.secteurs) ? startup.secteurs as string[] : [];
-            
-            return (
-              <Link 
-                href={`/startups/${startup.id}`} 
-                key={startup.id}
-                className="group bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col"
-              >
-                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative">
-                  {startup.logoUrl ? (
-                    <img src={startup.logoUrl} alt={startup.nom} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#47295C]/20">
-                      <Target size={64} />
-                    </div>
-                  )}
-                </div>
-                
-                <div className="p-8 flex-1 flex flex-col">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{startup.nom}</h3>
-                  <p className="text-gray-600 line-clamp-3 mb-6 flex-1">
-                    {startup.pitchResume || "Aucune description fournie pour le moment."}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-6 mt-auto">
-                    {secteurs.slice(0, 3).map((secteur, i) => (
-                      <span key={i} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
-                        {secteur}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center text-sm font-bold text-[#47295C] group-hover:text-[#964594] transition-colors mt-auto">
-                    Voir le profil détaillé 
-                    <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
-                </div>
+      <section className="bg-cream py-16 lg:py-20">
+        <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-8">
+          {startups.length === 0 ? (
+            <div className="facet-tr bg-violet-dark p-10 text-white">
+              <h2 className="font-serif text-3xl font-bold">La vitrine se remplit avec chaque promotion.</h2>
+              <p className="mt-4 max-w-xl text-lg leading-relaxed text-white/80">
+                Les startups admises au programme y publient leur profil, visible des investisseurs.
+              </p>
+              <Link href="/candidature" className="btn btn-primary mt-8">
+                Candidater au programme <ArrowRight size={18} />
               </Link>
-            )
-          })}
+            </div>
+          ) : (
+            <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {startups.map((startup) => {
+                const secteurs = Array.isArray(startup.secteurs) ? (startup.secteurs as string[]) : [];
+                return (
+                  <li key={startup.id}>
+                    <Link
+                      href={`/startups/${startup.id}`}
+                      className="group flex h-full flex-col bg-white shadow-lift transition-transform duration-500 hover:-translate-y-1.5"
+                    >
+                      <div className="relative aspect-[16/9] overflow-hidden bg-sand">
+                        {startup.logoUrl ? (
+                          <Image src={startup.logoUrl} alt="" fill sizes="(min-width: 1024px) 30vw, 90vw" className="object-cover" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center">
+                            <span className="hex flex h-20 w-20 items-center justify-center bg-violet-dark font-serif text-4xl font-bold text-white">
+                              {startup.nom.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        <span className="absolute left-0 top-0 bg-orange-accent px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+                          {STADE[startup.stade] ?? startup.stade}
+                        </span>
+                      </div>
+                      <div className="flex flex-1 flex-col p-7">
+                        <h2 className="font-serif text-2xl font-bold text-violet-dark">{startup.nom}</h2>
+                        <p className="mt-3 line-clamp-3 flex-1 leading-relaxed text-gray-main">
+                          {startup.pitchResume || "Description à venir."}
+                        </p>
+                        {secteurs.length > 0 && (
+                          <ul className="mt-5 flex flex-wrap gap-2">
+                            {secteurs.slice(0, 3).map((s) => (
+                              <li key={s} className="border border-violet-dark/25 px-2.5 py-1 text-xs font-bold text-violet-dark">
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-violet-dark transition-all group-hover:gap-3 group-hover:text-orange-deep">
+                          Voir le profil <ArrowRight size={16} />
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
-
-        {startups.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-3xl border border-gray-200">
-            <Target className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900">Aucune startup publique</h3>
-            <p className="text-gray-500 mt-2">Notre annuaire est en cours de mise à jour.</p>
-          </div>
-        )}
-
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

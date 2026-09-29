@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FileUp, FileText, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { realmFetch } from "@/lib/realm-fetch";
 interface AdminDoc {
   id: string;
   nom: string;
@@ -28,7 +29,7 @@ export default function AdminStartupDocuments({ startupId, initialDocuments }: {
       formData.append("file", file);
 
       // Simulate S3 upload
-      const uploadRes = await fetch("/api/upload", {
+      const uploadRes = await realmFetch("/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -40,7 +41,7 @@ export default function AdminStartupDocuments({ startupId, initialDocuments }: {
       }
 
       // Add record to database via the API we just updated for admins
-      const docRes = await fetch(`/api/startups/${startupId}/documents`, {
+      const docRes = await realmFetch(`/api/startups/${startupId}/documents`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

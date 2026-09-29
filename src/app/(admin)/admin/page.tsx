@@ -2,13 +2,18 @@ import React from "react";
 import AdminKPIs from "@/components/features/admin/AdminKPIs";
 import StartupComparisonModule from "@/components/features/admin/StartupComparisonModule";
 import AdminAlertsCenter from "@/components/features/admin/AdminAlertsCenter";
-import { Download, Calendar, Bell, MessageSquare } from "lucide-react";
-import Link from "next/link";
+import PipelineSummary from "@/components/features/admin/crm/PipelineSummary";
 import { prisma } from "@/lib/prisma";
+import { adminApi } from "@/lib/server-api";
+import type { CrmStats } from "@/lib/crm/types";
+
+export const dynamic = "force-dynamic";
 
 
 export default async function AdminDashboardPage() {
-  const [candidaturesCount, startupsCount, mentorsCount, rawStartups] = await Promise.all([
+  const [crmStats, candidaturesCount, startupsCount, mentorsCount, rawStartups] = await Promise.all([
+    // Le CRM est un module à part : son indisponibilité ne doit pas casser le tableau de bord.
+    adminApi<CrmStats>("/api/crm/stats").catch(() => null),
     prisma.candidature.count({ where: { statut: 'SOUMISE' } }),
     prisma.startupProfile.count(),
     prisma.mentorProfile.count({ where: { actif: true } }),
@@ -91,43 +96,29 @@ export default async function AdminDashboardPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen pb-10">
-      {/* Top Header Section */}
-      <header className="bg-white px-8 py-6 border-b border-gray-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm sticky top-0 z-20">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord Administrateur</h1>
-          <p className="text-sm text-gray-500 mt-1">Vue d'ensemble de l'écosystème et des indicateurs clés de l'incubateur.</p>
-        </div>
-        
-        <div className="flex items-center gap-4 shrink-0">
-          <div className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600 shadow-sm">
-            <Calendar size={14} className="text-gray-400" />
-            Période : 30 derniers jours
-            <svg className="w-3 h-3 text-gray-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-          
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#47295C] hover:bg-[#5a3875] text-white rounded-lg text-xs font-bold transition-colors shadow-md shadow-[#47295C]/20">
-            <Download size={14} />
-            Exporter le rapport (PDF/Excel)
-          </button>
-        </div>
+    <div className="flex min-h-screen flex-col pb-10">
+      <header className="border-b border-line bg-white px-6 py-5 lg:px-8">
+        <h1 className="font-serif text-[1.7rem] font-extrabold leading-tight text-violet-dark">Tableau de bord</h1>
+        <p className="mt-1 text-sm text-gray-main">
+          Vue d&apos;ensemble de l&apos;écosystème : candidatures, startups, mentors et pipeline commercial.
+        </p>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
-        <AdminKPIs 
+      <div className="mx-auto w-full max-w-[1600px] flex-1 p-6 lg:p-8">
+        <AdminKPIs
           candidaturesCount={candidaturesCount}
           startupsCount={startupsCount}
           mentorsCount={mentorsCount}
+          openLeads={crmStats?.totals.open ?? null}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <div className="lg:col-span-2 xl:col-span-3 flex flex-col gap-6">
+        {crmStats && <PipelineSummary stats={crmStats} />}
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="flex flex-col gap-6 lg:col-span-2 xl:col-span-3">
             <StartupComparisonModule startups={mappedStartups} />
           </div>
-          
+
           <div className="lg:col-span-1 xl:col-span-1">
             <AdminAlertsCenter alerts={alertsData} />
           </div>

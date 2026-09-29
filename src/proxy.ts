@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { REALM_COOKIES, realmOfPath } from "@/lib/realm-shared";
+
 const protectedRoutes = ["/admin", "/espace-mentor", "/espace-investisseur", "/espace"];
 
 export function proxy(request: NextRequest) {
@@ -8,9 +10,11 @@ export function proxy(request: NextRequest) {
   const isProtected = protectedRoutes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
+  // Chaque espace lit sa propre session : l'administration ne voit pas les
+  // cookies des membres, et inversement.
+  const cookieNames = REALM_COOKIES[realmOfPath(pathname)];
   const hasSessionCookie = Boolean(
-    request.cookies.get("in_cubator_access")?.value ||
-      request.cookies.get("in_cubator_refresh")?.value,
+    request.cookies.get(cookieNames.access)?.value || request.cookies.get(cookieNames.refresh)?.value,
   );
 
   if (isProtected && !isAdminLogin && !hasSessionCookie) {

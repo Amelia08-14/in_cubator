@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth.js';
 import { authRateLimiter } from '../../middleware/rate-limiters.js';
 import {
+  adminLoginHandler,
   loginHandler,
   logoutAllHandler,
   logoutHandler,
@@ -21,6 +22,7 @@ authRouter.use((_request, response, next) => {
 
 authRouter.post('/register', authRateLimiter, registerHandler);
 authRouter.post('/login', authRateLimiter, loginHandler);
+authRouter.post('/admin/login', authRateLimiter, adminLoginHandler);
 authRouter.post('/refresh', refreshHandler);
 authRouter.get('/session', sessionHandler);
 authRouter.post('/logout', logoutHandler);

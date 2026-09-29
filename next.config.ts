@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // L'ancienne vitrine s'appuyait sur des données de démonstration ;
+      // l'annuaire réel des startups est /startups.
+      { source: "/vitrine", destination: "/startups", permanent: true },
+      { source: "/vitrine/:slug", destination: "/startups", permanent: true },
+    ];
+  },
   async rewrites() {
     const apiOrigin = process.env.API_INTERNAL_URL ?? "http://127.0.0.1:4000";
 

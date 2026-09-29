@@ -25,6 +25,14 @@ export async function login(email: string, password: string) {
   })).user;
 }
 
+/** Connexion de l'équipe : route dédiée, session distincte de celle des membres. */
+export async function adminLogin(email: string, password: string) {
+  return (await apiClientV2<AuthPayload>("/auth/admin/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  })).user;
+}
+
 export async function register(email: string, password: string) {
   return (await apiClientV2<AuthPayload>("/auth/register", {
     method: "POST",

@@ -1,39 +1,36 @@
-"use client";
+import type { Metadata } from "next";
 
-import React from "react";
-import { FileDown } from "lucide-react";
-import AdminCohorteHeader from "@/components/features/admin/cohortes/AdminCohorteHeader";
-import AdminCohorteLeaderboard from "@/components/features/admin/cohortes/AdminCohorteLeaderboard";
-import AdminCohorteTable from "@/components/features/admin/cohortes/AdminCohorteTable";
+import CohortesWorkspace from "@/components/features/admin/cohortes/CohortesWorkspace";
+import type { Cohort, CohortOverview } from "@/lib/cohorts/types";
+import { requirePageRoles } from "@/lib/page-auth";
+import { adminApi } from "@/lib/server-api";
 
-export default function AdminCohortesPage() {
+export const metadata: Metadata = { title: "Cohortes" };
+export const dynamic = "force-dynamic";
+
+// Cohorte affichée par défaut : celle qui est en cours, sinon celle qui reçoit
+// des candidatures, sinon la plus récente.
+function pickDefault(cohorts: Cohort[]): Cohort | undefined {
   return (
-    <div className="flex flex-col min-h-screen pb-10 bg-[#f8f9fa]">
-      
-      {/* Top Header Section */}
-      <header className="bg-white px-8 py-6 border-b border-gray-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm sticky top-0 z-20">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Gestion des Cohortes & Startups</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Suivez la performance des startups incubées et intervenez si nécessaire.
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-4 shrink-0">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#eaddf7] text-[#47295C] hover:bg-[#f1edfa] rounded-lg text-xs font-bold transition-colors shadow-sm">
-            <FileDown size={14} />
-            Exporter le suivi (PDF/Excel)
-          </button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="flex-1 p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
-        <AdminCohorteHeader />
-        <AdminCohorteLeaderboard />
-        <AdminCohorteTable />
-      </div>
-
-    </div>
+    cohorts.find((c) => c.statut === "EN_COURS") ??
+    cohorts.find((c) => c.statut === "OUVERTE_CANDIDATURES") ??
+    cohorts[0]
   );
+}
+
+export default async function AdminCohortesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cohorte?: string }>;
+}) {
+  await requirePageRoles(["ADMIN", "GESTIONNAIRE"], "/admin/connexion");
+  const { cohorte } = await searchParams;
+
+  const { cohorts } = await adminApi<{ cohorts: Cohort[] }>("/api/cohorts");
+  const selected = cohorts.find((c) => c.id === cohorte) ?? pickDefault(cohorts);
+  const overview = selected
+    ? await adminApi<CohortOverview>(`/api/cohorts/${encodeURIComponent(selected.id)}/overview`)
+    : null;
+
+  return <CohortesWorkspace cohorts={cohorts} overview={overview} />;
 }

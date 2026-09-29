@@ -6,9 +6,9 @@ export default async function InvestisseurLayout({ children }: { children: React
   await requirePageRoles(["INVESTISSEUR"]);
 
   return (
-    <div className="flex min-h-screen bg-[#f8f9fa] font-sans" data-theme="light">
+    <div className="flex min-h-screen flex-col bg-paper font-sans lg:flex-row" data-theme="light">
       <InvestorSidebar />
-      <main className="flex-1 overflow-x-hidden">
+      <main className="min-w-0 flex-1">
         {children}
       </main>
     </div>

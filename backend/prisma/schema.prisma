@@ -94,6 +94,8 @@ model User {
   demandeMeetings Meeting[]        @relation("meeting_demandePar")
   accordeAcces    AccesDealRoom[]  @relation("acces_accordePar")
   refreshSessions RefreshSession[]
+  assignedLeads   Lead[]           @relation("lead_assignee")
+  leadActivities  LeadActivity[]   @relation("lead_activity_author")
 
   @@map("users")
 }
@@ -436,4 +438,186 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@map("audit_logs")
+}
+
+// ---------------------------------------------------------------------------
+// CRM — leads et pipeline (façon Odoo). Les étapes suivent le processus
+// d'incubation du catalogue IN NETWORK ; pas de montant, on suit le volume,
+// le score, la priorité et la probabilité par étape.
+// ---------------------------------------------------------------------------
+
+enum LeadStage {
+  NOUVEAU
+  DIAGNOSTIC
+  ACCOMPAGNEMENT
+  TEST_TERRAIN
+  RESEAU
+  FORMATIONS
+  LANCEMENT
+}
+
+enum LeadStatus {
+  OUVERT
+  GAGNE
+  PERDU
+}
+
+enum LeadType {
+  STARTUP
+  INVESTISSEUR
+  PARTENAIRE
+  MENTOR
+  DIASPORA
+  AUTRE
+}
+
+enum LeadSource {
+  SITE_WEB
+  CANDIDATURE
+  EVENEMENT
+  RECOMMANDATION
+  PARTENAIRE
+  RESEAUX_SOCIAUX
+  TELEPHONE
+  IN_NETWORK
+  AUTRE
+}
+
+enum LeadActivityType {
+  NOTE
+  APPEL
+  EMAIL
+  REUNION
+  TACHE
+  SYSTEME
+}
+
+model Lead {
+  id             String     @id @default(cuid())
+  reference      String     @unique
+  title          String
+  contactName    String
+  email          String?
+  phone          String?
+  companyName    String?
+  type           LeadType   @default(STARTUP)
+  source         LeadSource @default(AUTRE)
+  stage          LeadStage  @default(NOUVEAU)
+  status         LeadStatus @default(OUVERT)
+  priority       Int        @default(0)
+  score          Int?
+  message        String?    @db.Text
+  lostReason     String?
+  nextActivityAt DateTime?
+  candidatureId  String?    @unique
+  assignedToId   String?
+  assignedTo     User?      @relation("lead_assignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  stageChangedAt DateTime   @default(now())
+  wonAt          DateTime?
+  lostAt         DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  activities LeadActivity[]
+
+  @@index([status, stage])
+  @@index([assignedToId])
+  @@index([createdAt])
+  @@index([nextActivityAt])
+  @@map("leads")
+}
+
+model LeadActivity {
+  id        String           @id @default(cuid())
+  leadId    String
+  lead      Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  authorId  String?
+  author    User?            @relation("lead_activity_author", fields: [authorId], references: [id], onDelete: SetNull)
+  type      LeadActivityType @default(NOTE)
+  content   String           @db.Text
+  dueAt     DateTime?
+  doneAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([leadId, createdAt])
+  @@index([dueAt, doneAt])
+  @@map("lead_activities")
+}
+
+// ---------------------------------------------------------------------------
+// Évènements — conférences, ateliers, networking… organisés par IN-CUBATOR
+// (modèle repris d'IN NETWORK). L'inscription est ouverte aux visiteurs sans
+// compte : on conserve leurs coordonnées directement sur l'inscription.
+// ---------------------------------------------------------------------------
+
+enum EventType {
+  CONFERENCE
+  ATELIER
+  NETWORKING
+  MASTERCLASS
+  DEMO_DAY
+}
+
+enum EventOrigin {
+  IN_EVENT
+  EXTERNAL
+  CO_ORGANIZED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EventRegistrationStatus {
+  REGISTERED
+  ATTENDED
+  CANCELLED
+}
+
+model Event {
+  id                 String      @id @default(cuid())
+  title              String
+  slug               String      @unique
+  summary            String?     @db.VarChar(280)
+  description        String      @db.Text
+  type               EventType
+  origin             EventOrigin @default(IN_EVENT)
+  status             EventStatus @default(DRAFT)
+  location           String?
+  startAt            DateTime
+  endAt              DateTime
+  capacity           Int
+  coverImage         String?     @db.VarChar(1024)
+  videoUrl           String?     @db.VarChar(1024)
+  coOrganizerName    String?
+  registrationsOpen  Boolean     @default(true)
+  createdById        String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  registrations EventRegistration[]
+
+  @@index([status, startAt])
+  @@index([startAt])
+  @@map("events")
+}
+
+model EventRegistration {
+  id           String                  @id @default(cuid())
+  eventId      String
+  event        Event                   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  fullName     String
+  email        String
+  phone        String?
+  organization String?
+  message      String?                 @db.Text
+  status       EventRegistrationStatus @default(REGISTERED)
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  @@unique([eventId, email])
+  @@index([eventId, status])
+  @@map("event_registrations")
 }

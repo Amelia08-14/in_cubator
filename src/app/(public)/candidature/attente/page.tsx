@@ -1,10 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { Clock, ShieldCheck, ArrowRight } from "lucide-react";
+import { ArrowRight, Clock, ShieldCheck } from "lucide-react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+export const metadata = { title: "Candidature en cours de révision" };
 
 export default async function AttentePage() {
   const session = await auth();
@@ -15,47 +16,42 @@ export default async function AttentePage() {
 
   const profile = await prisma.startupProfile.findUnique({
     where: { userId: session.user.id },
-    include: { candidature: true }
+    include: { candidature: true },
   });
 
-  // If accepted, redirect to dashboard
+  // Une fois acceptée, la startup entre dans son espace.
   if (profile?.candidature?.statut === "ACCEPTEE") {
     redirect("/espace");
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F7FA] font-sans flex items-center justify-center p-6" data-theme="light">
-      <div className="max-w-md w-full bg-white rounded-3xl p-10 border border-gray-100 shadow-[0_8px_32px_rgba(71,41,92,0.08)] text-center relative overflow-hidden">
-        
-        <div className="absolute top-0 right-0 w-32 h-32 bg-[#47295C]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-
-        <div className="w-20 h-20 bg-[#F3EEF5] text-[#964594] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-[#964594]/10">
-          <Clock size={32} strokeWidth={1.5} />
-        </div>
-
-        <h1 className="text-2xl font-bold text-[#47295C] mb-4">Candidature en cours de révision</h1>
-        <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-          Merci pour votre soumission ! L'équipe IN-CUBATOR examine actuellement votre dossier. Vous recevrez une notification dès qu'une décision sera prise.
+    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-paper px-5 py-32">
+      <div
+        aria-hidden
+        className="absolute inset-y-0 right-0 -z-10 w-[50%] bg-paper-deep"
+        style={{ clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0 100%)" }}
+      />
+      <div className="facet-tr w-full max-w-lg bg-white p-9 shadow-deep sm:p-12">
+        <span className="hex flex h-16 w-16 items-center justify-center bg-violet-dark text-white" aria-hidden>
+          <Clock size={28} strokeWidth={1.8} />
+        </span>
+        <h1 className="mt-7 font-serif text-3xl font-extrabold leading-tight text-violet-dark">
+          Candidature en cours de révision.
+        </h1>
+        <p className="mt-4 text-lg leading-relaxed text-gray-main">
+          Merci pour votre soumission&nbsp;! L&apos;équipe IN-CUBATOR examine actuellement votre dossier.
+          Vous recevrez une notification dès qu&apos;une décision sera prise.
         </p>
 
-        <div className="bg-gray-50 rounded-xl p-4 flex flex-col gap-3 text-left mb-8">
-          <div className="flex items-center gap-3">
-            <ShieldCheck size={18} className="text-[#964594]" />
-            <span className="text-xs font-bold text-[#47295C]">Évaluation sécurisée</span>
-          </div>
-          <p className="text-[11px] text-gray-500 pl-7 leading-relaxed">
-            Vos informations et documents sont protégés et ne seront consultés que par notre comité d'évaluation.
-          </p>
-        </div>
+        <p className="mt-7 flex items-start gap-3 border-t border-line pt-6 text-sm leading-relaxed text-gray-main">
+          <ShieldCheck size={20} className="mt-0.5 shrink-0 text-violet-main" />
+          Vos informations et documents sont protégés et ne sont consultés que par notre comité d&apos;évaluation.
+        </p>
 
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-2 text-sm font-bold text-white bg-[#47295C] hover:bg-[#964594] transition-colors px-6 py-3 rounded-lg w-full justify-center shadow-md"
-        >
-          Retour à l'accueil
-          <ArrowRight size={16} />
+        <Link href="/" className="btn btn-violet mt-8 w-full">
+          Retour à l&apos;accueil <ArrowRight size={17} />
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

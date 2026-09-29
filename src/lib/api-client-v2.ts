@@ -1,3 +1,5 @@
+import { REALM_HEADER, realmOfPath } from "@/lib/realm-shared";
+
 type ApiErrorPayload = {
   code: string;
   message: string;
@@ -26,6 +28,13 @@ export class ClientApiError extends Error {
 
 let refreshPromise: Promise<boolean> | null = null;
 
+// Les pages /admin utilisent la session de l'administration, toutes les autres
+// celle des membres.
+function realmHeaders(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  return realmOfPath(window.location.pathname) === "admin" ? { [REALM_HEADER]: "admin" } : {};
+}
+
 const authPathsWithoutRefresh = new Set([
   "/auth/login",
   "/auth/register",
@@ -38,7 +47,7 @@ async function refreshAccessCookie() {
     refreshPromise = fetch("/api/v2/auth/refresh", {
       method: "POST",
       credentials: "include",
-      headers: { accept: "application/json" },
+      headers: { accept: "application/json", ...realmHeaders() },
     })
       .then((response) => response.ok)
       .catch(() => false)
@@ -57,6 +66,7 @@ async function request<T>(
 ): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set("accept", "application/json");
+  Object.entries(realmHeaders()).forEach(([key, value]) => headers.set(key, value));
 
   if (init.body && !(init.body instanceof FormData) && !headers.has("content-type")) {
     headers.set("content-type", "application/json");

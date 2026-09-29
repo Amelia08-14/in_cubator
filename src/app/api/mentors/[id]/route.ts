@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { successResponse, errorResponse, requireRole } from "@/lib/api-utils";
 import { auth } from "@/auth";
+import { currentRealm } from "@/lib/realm";
 
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

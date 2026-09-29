@@ -1,7 +1,8 @@
 import "server-only";
 
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { authCookieHeader, currentRealm } from "@/lib/realm";
+import { REALM_HEADER } from "@/lib/realm-shared";
 
 function getApiOrigin() {
   return process.env.API_INTERNAL_URL ?? "http://127.0.0.1:4000";
@@ -25,16 +26,15 @@ type ProxyInit = {
  * each legacy Route Handler is cut over from direct Prisma access.
  */
 export async function proxyToApi(path: string, init: ProxyInit = {}) {
-  const cookieStore = await cookies();
-  const authCookies = ["in_cubator_access", "in_cubator_refresh"]
-    .map((name) => cookieStore.get(name))
-    .filter((cookie): cookie is NonNullable<typeof cookie> => Boolean(cookie))
-    .map((cookie) => `${cookie.name}=${encodeURIComponent(cookie.value)}`)
-    .join("; ");
+  const realm = await currentRealm();
+  const authCookies = await authCookieHeader(realm);
 
   const headers = new Headers({ accept: "application/json" });
   if (authCookies) {
     headers.set("cookie", authCookies);
+  }
+  if (realm === "admin") {
+    headers.set(REALM_HEADER, "admin");
   }
 
   let body: string | undefined;
