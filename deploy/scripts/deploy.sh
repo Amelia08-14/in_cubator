@@ -36,9 +36,29 @@ fi
   exit 1
 }
 
-echo '1/6 Installation reproductible des dependances'
-npm --prefix "$APP_ROOT" ci --no-audit --no-fund
-npm --prefix "$APP_ROOT/backend" ci --no-audit --no-fund
+# Les dependances ne sont reinstallees que si package-lock.json (ou, a la racine,
+# le schema Prisma qui sert a generer le client) a change depuis le dernier
+# deploiement. Sinon on garde node_modules : la mise a jour est bien plus rapide.
+install_if_changed() {
+  local dir="$1" label="$2"
+  shift 2
+  local marker="$dir/node_modules/.deploy-inputs-hash"
+  local current
+  current="$(cat "$dir/package-lock.json" "$@" 2>/dev/null | sha256sum | cut -d' ' -f1)"
+
+  if [[ -f "$marker" && "$(cat "$marker")" == "$current" ]]; then
+    echo "  $label : dependances inchangees, installation ignoree"
+    return
+  fi
+
+  echo "  $label : installation des dependances"
+  npm --prefix "$dir" ci --no-audit --no-fund
+  echo "$current" > "$marker"
+}
+
+echo '1/6 Dependances (installees seulement si elles ont change)'
+install_if_changed "$APP_ROOT" 'site' "$APP_ROOT/prisma/schema.prisma"
+install_if_changed "$APP_ROOT/backend" 'api'
 
 echo '2/6 Validation et construction du backend'
 npm --prefix "$APP_ROOT/backend" run prisma:validate
