@@ -58,8 +58,8 @@ fi
 echo '5/6 Application des migrations Prisma deja versionnees'
 npm --prefix "$APP_ROOT/backend" run db:migrate:deploy
 
-echo '6/6 Rechargement gracieux PM2 et controles de sante'
-IN_CUBATOR_ROOT="$APP_ROOT" pm2 startOrReload \
+echo '6/6 Redemarrage PM2 et controles de sante'
+IN_CUBATOR_ROOT="$APP_ROOT" pm2 startOrRestart \
   "$APP_ROOT/deploy/ecosystem.config.cjs" \
   --env production \
   --update-env
