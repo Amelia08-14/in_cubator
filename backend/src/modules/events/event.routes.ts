@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRoles } from '../../middleware/auth.js';
+import { requireAuth, requireSection } from '../../middleware/auth.js';
 import { publicEventRegistrationRateLimiter } from '../../middleware/rate-limiters.js';
 import {
   createEventHandler,
@@ -24,7 +24,7 @@ eventsRouter.post('/:slug/registrations', publicEventRegistrationRateLimiter, re
 // Back-office : réservé à l'équipe.
 export const adminEventsRouter = Router();
 
-adminEventsRouter.use(requireAuth, requireRoles('ADMIN', 'GESTIONNAIRE'));
+adminEventsRouter.use(requireAuth, requireSection('evenements'));
 adminEventsRouter.use((_request, response, next) => {
   response.setHeader('Cache-Control', 'no-store');
   next();

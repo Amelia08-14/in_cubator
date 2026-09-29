@@ -14,6 +14,7 @@ import {
   revokeSession,
   type SessionMetadata,
 } from './auth.service.js';
+import { presentUser } from './auth.presenter.js';
 
 function getSessionMetadata(request: Request): SessionMetadata {
   return {
@@ -31,20 +32,20 @@ function readRefreshCookie(request: Request, realm: AuthRealm): string | undefin
 export async function registerHandler(request: Request, response: Response): Promise<void> {
   const result = await register(registerSchema.parse(request.body), getSessionMetadata(request));
   setAuthCookies(response, result, 'member');
-  response.status(201).json({ data: { user: result.user } });
+  response.status(201).json({ data: { user: presentUser(result.user) } });
 }
 
 export async function loginHandler(request: Request, response: Response): Promise<void> {
   const result = await login(loginSchema.parse(request.body), getSessionMetadata(request), 'member');
   setAuthCookies(response, result, 'member');
-  response.status(200).json({ data: { user: result.user } });
+  response.status(200).json({ data: { user: presentUser(result.user) } });
 }
 
 // Connexion de l'équipe : route dédiée, jamais déduite d'un en-tête.
 export async function adminLoginHandler(request: Request, response: Response): Promise<void> {
   const result = await login(loginSchema.parse(request.body), getSessionMetadata(request), 'admin');
   setAuthCookies(response, result, 'admin');
-  response.status(200).json({ data: { user: result.user } });
+  response.status(200).json({ data: { user: presentUser(result.user) } });
 }
 
 export async function refreshHandler(request: Request, response: Response): Promise<void> {
@@ -56,7 +57,7 @@ export async function refreshHandler(request: Request, response: Response): Prom
 
   const result = await refreshSession(refreshToken, getSessionMetadata(request), realm);
   setAuthCookies(response, result, realm);
-  response.status(200).json({ data: { user: result.user } });
+  response.status(200).json({ data: { user: presentUser(result.user) } });
 }
 
 export async function sessionHandler(request: Request, response: Response): Promise<void> {
@@ -67,7 +68,7 @@ export async function sessionHandler(request: Request, response: Response): Prom
   }
 
   const user = await getCurrentSessionUser(refreshToken, realm);
-  response.status(200).json({ data: { user } });
+  response.status(200).json({ data: { user: presentUser(user) } });
 }
 
 export async function logoutHandler(request: Request, response: Response): Promise<void> {
@@ -93,5 +94,5 @@ export async function meHandler(request: Request, response: Response): Promise<v
   }
 
   const user = await getCurrentUser(request.auth.userId);
-  response.status(200).json({ data: { user } });
+  response.status(200).json({ data: { user: presentUser(user) } });
 }

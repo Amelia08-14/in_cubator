@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRoles } from '../../middleware/auth.js';
+import { requireAuth, requireRoles, requireSectionForStaff } from '../../middleware/auth.js';
 import {
   createObjectiveHandler,
   createObjectiveTaskHandler,
@@ -14,7 +14,11 @@ import {
 
 export const roadmapRouter = Router();
 
-roadmapRouter.use(requireAuth, requireRoles('PORTEUR_STARTUP', 'ADMIN', 'GESTIONNAIRE'));
+roadmapRouter.use(
+  requireAuth,
+  requireRoles('PORTEUR_STARTUP', 'ADMIN', 'GESTIONNAIRE'),
+  requireSectionForStaff('startups'),
+);
 roadmapRouter.use((_request, response, next) => {
   response.setHeader('Cache-Control', 'no-store');
   next();

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRoles } from '../../middleware/auth.js';
+import { requireAuth, requireSection } from '../../middleware/auth.js';
 import {
   cohortOverviewHandler,
   createCohortHandler,
@@ -10,7 +10,7 @@ import {
 
 export const cohortsRouter = Router();
 
-cohortsRouter.use(requireAuth, requireRoles('ADMIN', 'GESTIONNAIRE'));
+cohortsRouter.use(requireAuth, requireSection('cohortes'));
 cohortsRouter.use((_request, response, next) => {
   response.setHeader('Cache-Control', 'no-store');
   next();

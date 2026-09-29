@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRoles } from '../../middleware/auth.js';
+import { requireAuth, requireRoles, requireSection } from '../../middleware/auth.js';
 import {
   createMentorHandler,
   createOwnDisponibiliteHandler,
@@ -48,7 +48,7 @@ mentorsRouter.delete(
   deleteOwnDisponibiliteHandler,
 );
 
-adminMentorsRouter.use(requireAuth, requireRoles('ADMIN', 'GESTIONNAIRE'));
+adminMentorsRouter.use(requireAuth, requireSection('mentors'));
 adminMentorsRouter.get('/', listMentorsForAdminHandler);
 adminMentorsRouter.post('/', createMentorHandler);
 adminMentorsRouter.patch('/:id/activation', setMentorActivationHandler);

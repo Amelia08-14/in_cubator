@@ -10,7 +10,12 @@ import type { CrmStats } from "@/lib/crm/types";
 export const dynamic = "force-dynamic";
 
 
-export default async function AdminDashboardPage() {
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ acces?: string }>;
+}) {
+  const { acces } = await searchParams;
   const [crmStats, candidaturesCount, startupsCount, mentorsCount, rawStartups] = await Promise.all([
     // Le CRM est un module à part : son indisponibilité ne doit pas casser le tableau de bord.
     adminApi<CrmStats>("/api/crm/stats").catch(() => null),
@@ -105,6 +110,11 @@ export default async function AdminDashboardPage() {
       </header>
 
       <div className="mx-auto w-full max-w-[1600px] flex-1 p-6 lg:p-8">
+        {acces === "refuse" && (
+          <p role="alert" className="mb-6 border border-orange-accent/40 bg-orange-accent/10 px-4 py-3 text-sm font-semibold text-orange-deep">
+            Vous n&apos;avez pas accès à cette section. Demandez à un administrateur de vous l&apos;accorder.
+          </p>
+        )}
         <AdminKPIs
           candidaturesCount={candidaturesCount}
           startupsCount={startupsCount}

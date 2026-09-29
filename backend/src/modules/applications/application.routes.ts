@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRoles } from '../../middleware/auth.js';
+import { requireAuth, requireRoles, requireSection } from '../../middleware/auth.js';
 import {
   createOwnApplicationHandler,
   decideApplicationHandler,
@@ -24,16 +24,16 @@ applicationsRouter.patch('/me', requireRoles('PORTEUR_STARTUP'), patchOwnApplica
 
 applicationsRouter.get(
   '/',
-  requireRoles('ADMIN', 'GESTIONNAIRE'),
+  requireSection('candidatures'),
   listApplicationsForAdminHandler,
 );
 applicationsRouter.get(
   '/:id',
-  requireRoles('ADMIN', 'GESTIONNAIRE'),
+  requireSection('candidatures'),
   getApplicationForAdminHandler,
 );
 applicationsRouter.patch(
   '/:id/decision',
-  requireRoles('ADMIN', 'GESTIONNAIRE'),
+  requireSection('candidatures'),
   decideApplicationHandler,
 );

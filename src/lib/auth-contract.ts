@@ -15,6 +15,9 @@ export type AuthUser = {
   email: string;
   role: AppRole;
   actif: boolean;
+  fullName?: string | null;
+  /** Sections de l'administration accessibles (équipe uniquement). */
+  sections?: string[];
   createdAt: string;
   updatedAt: string;
 };

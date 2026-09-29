@@ -1,3 +1,4 @@
+import type { AdminSection } from '../config/permissions.js';
 import type { Role } from '../generated/prisma/enums.js';
 
 declare global {
@@ -7,6 +8,8 @@ declare global {
         userId: string;
         email: string;
         role: Role;
+        /** Sections de l'administration accessibles (équipe uniquement). */
+        sections: AdminSection[];
       };
     }
   }

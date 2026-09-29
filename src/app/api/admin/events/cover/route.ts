@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 
+import { canOpenSection } from "@/lib/admin-sections";
 import { errorResponse, requireRole, successResponse } from "@/lib/api-utils";
 import { EVENT_MEDIA_PREFIX, getPublicMediaDirectory } from "@/lib/public-media";
 
@@ -25,8 +26,11 @@ const TYPES: Record<string, { extension: string; matches: (b: Buffer) => boolean
 // Envoi de l'image de couverture d'un évènement (réservé à l'équipe).
 export async function POST(request: Request) {
   try {
-    const { error } = await requireRole(["ADMIN", "GESTIONNAIRE"]);
+    const { session, error } = await requireRole(["ADMIN", "GESTIONNAIRE"]);
     if (error) return error;
+    if (!canOpenSection(session!.user, "evenements")) {
+      return errorResponse("FORBIDDEN", "Vous n'avez pas accès à cette section.", undefined, 403);
+    }
 
     const file = (await request.formData()).get("file");
     if (!(file instanceof File)) {

@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'express';
 
+import { sectionsFor, type AdminSection } from '../config/permissions.js';
 import { cookieNamesFor, realmOfRequest, roleBelongsToRealm } from '../config/realm.js';
 import { AppError } from '../errors/app-error.js';
 import type { Role } from '../generated/prisma/enums.js';
@@ -23,7 +24,7 @@ export const requireAuth: RequestHandler = async (request, _response, next) => {
     const claims = verifyAccessToken(token);
     const user = await prisma.user.findUnique({
       where: { id: claims.userId },
-      select: { id: true, email: true, role: true, actif: true },
+      select: { id: true, email: true, role: true, actif: true, permissions: true },
     });
 
     if (!user?.actif) {
@@ -39,6 +40,7 @@ export const requireAuth: RequestHandler = async (request, _response, next) => {
       userId: user.id,
       email: user.email,
       role: user.role,
+      sections: sectionsFor(user.role, user.permissions),
     };
     next();
   } catch (error) {
@@ -58,6 +60,41 @@ export function requireRoles(...roles: readonly Role[]): RequestHandler {
       return;
     }
 
+    next();
+  };
+}
+
+/**
+ * Réserve une route à l'équipe qui a reçu cette section : un administrateur y
+ * accède toujours, un manager seulement si l'administrateur la lui a accordée.
+ */
+export function requireSection(section: AdminSection): RequestHandler {
+  return (request, _response, next) => {
+    if (!request.auth) {
+      next(AppError.unauthorized());
+      return;
+    }
+
+    const { role, sections } = request.auth;
+    if ((role !== 'ADMIN' && role !== 'GESTIONNAIRE') || !sections.includes(section)) {
+      next(AppError.forbidden("Vous n'avez pas accès à cette section."));
+      return;
+    }
+
+    next();
+  };
+}
+
+/**
+ * Pour les routes partagées avec les membres : seul le personnel est soumis à
+ * la section ; les autres rôles restent gérés par `requireRoles`.
+ */
+export function requireSectionForStaff(section: AdminSection): RequestHandler {
+  return (request, _response, next) => {
+    if (request.auth && (request.auth.role === 'ADMIN' || request.auth.role === 'GESTIONNAIRE')) {
+      requireSection(section)(request, _response, next);
+      return;
+    }
     next();
   };
 }

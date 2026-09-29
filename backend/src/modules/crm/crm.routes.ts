@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { requireAuth, requireRoles } from '../../middleware/auth.js';
+import { requireAuth, requireRoles, requireSection } from '../../middleware/auth.js';
 import { publicLeadRateLimiter } from '../../middleware/rate-limiters.js';
 import {
   addActivityHandler,
@@ -25,7 +25,7 @@ export const crmRouter = Router();
 crmRouter.post('/public/leads', publicLeadRateLimiter, createPublicLeadHandler);
 
 // Tout le reste est réservé à l'équipe.
-crmRouter.use(requireAuth, requireRoles('ADMIN', 'GESTIONNAIRE'));
+crmRouter.use(requireAuth, requireSection('crm'));
 crmRouter.use((_request, response, next) => {
   response.setHeader('Cache-Control', 'no-store');
   next();
