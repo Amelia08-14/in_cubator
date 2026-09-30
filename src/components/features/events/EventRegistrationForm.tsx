@@ -9,7 +9,16 @@ import { formatEventDate, formatEventTime, type EventItem } from "@/lib/events/t
 
 type Status = "idle" | "sending" | "done" | "error";
 
-export default function EventRegistrationForm({ event, onDone }: { event: EventItem; onDone?: () => void }) {
+export default function EventRegistrationForm({
+  event,
+  onDone,
+  stickyAction = false,
+}: {
+  event: EventItem;
+  onDone?: () => void;
+  /** Bouton d'envoi collé en bas de la zone qui défile (fenêtre d'inscription). */
+  stickyAction?: boolean;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [fields, setFields] = useState<Record<string, string>>({});
@@ -50,7 +59,7 @@ export default function EventRegistrationForm({ event, onDone }: { event: EventI
 
   if (status === "done") {
     return (
-      <div role="status" className="text-violet-dark">
+      <div role="status" className={`text-violet-dark ${stickyAction ? "pb-7 sm:pb-10" : ""}`}>
         <span className="hex flex h-10 w-10 items-center justify-center bg-orange-accent text-white">
           <Check size={20} strokeWidth={3} />
         </span>
@@ -100,7 +109,14 @@ export default function EventRegistrationForm({ event, onDone }: { event: EventI
           {error}
         </p>
       )}
-      <div className="sm:col-span-2">
+      {/* Dans la fenêtre, le bouton reste collé en bas : il est toujours visible, même sur un petit écran. */}
+      <div
+        className={
+          stickyAction
+            ? "sticky bottom-0 -mx-7 border-t border-line bg-white px-7 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 sm:col-span-2 sm:-mx-10 sm:px-10"
+            : "sm:col-span-2"
+        }
+      >
         <button type="submit" disabled={status === "sending"} className="btn btn-primary w-full sm:w-auto disabled:opacity-60">
           {status === "sending" ? "Envoi en cours…" : "Confirmer mon inscription"}
           <ArrowRight size={18} />

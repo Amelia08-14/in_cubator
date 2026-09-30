@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, MapPin, X } from "lucide-react";
 
@@ -19,9 +20,17 @@ function RegistrationDialog({ event, onClose }: { event: EventItem; onClose: () 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    // La page derrière ne défile pas pendant que la fenêtre est ouverte.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [onClose]);
 
+  // La fenêtre prend au plus la hauteur réellement visible (max-h-full du conteneur fixe) :
+  // « vh » compte la zone sous la barre d'adresse du téléphone et masquait le bas du formulaire.
   return (
     <div className="fixed inset-0 z-[120] flex items-end justify-center sm:items-center sm:p-6">
       <button type="button" aria-label="Fermer" className="absolute inset-0 bg-violet-ink/60 backdrop-blur-[2px]" onClick={onClose} />
@@ -29,19 +38,20 @@ function RegistrationDialog({ event, onClose }: { event: EventItem; onClose: () 
         role="dialog"
         aria-modal="true"
         aria-labelledby="event-dialog-title"
-        data-lenis-prevent
-        className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto bg-white p-7 shadow-deep sm:p-10"
+        className="relative flex max-h-full w-full max-w-2xl flex-col bg-white shadow-deep"
       >
-        <button type="button" onClick={onClose} aria-label="Fermer" className="absolute right-4 top-4 p-1 text-gray-main hover:text-violet-dark">
+        <button type="button" onClick={onClose} aria-label="Fermer" className="absolute right-3 top-3 z-10 rounded-full bg-white/95 p-2 text-gray-main shadow-lift hover:text-violet-dark">
           <X size={22} />
         </button>
-        <h3 id="event-dialog-title" className="pr-8 font-serif text-2xl font-bold text-violet-dark">
-          S&apos;inscrire à « {event.title} »
-        </h3>
-        <p className="mb-6 mt-2 text-sm text-gray-main">
-          {event.spotsLeft} place{event.spotsLeft > 1 ? "s" : ""} restante{event.spotsLeft > 1 ? "s" : ""}. Gratuit, sans compte.
-        </p>
-        <EventRegistrationForm event={event} onDone={onClose} />
+        <div data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-7 pt-7 sm:px-10 sm:pt-10">
+          <h3 id="event-dialog-title" className="pr-8 font-serif text-2xl font-bold text-violet-dark">
+            S&apos;inscrire à « {event.title} »
+          </h3>
+          <p className="mb-6 mt-2 text-sm text-gray-main">
+            {event.spotsLeft} place{event.spotsLeft > 1 ? "s" : ""} restante{event.spotsLeft > 1 ? "s" : ""}. Gratuit, sans compte.
+          </p>
+          <EventRegistrationForm event={event} onDone={onClose} stickyAction />
+        </div>
       </div>
     </div>
   );
@@ -123,7 +133,11 @@ export default function EventCard({ event }: { event: EventItem }) {
         </div>
       </div>
 
-      {open && <RegistrationDialog event={event} onClose={() => setOpen(false)} />}
+      {/*
+        Rendue dans <body> et non dans la carte : la carte a un clip-path (.facet-tr) qui
+        rogne tout ce qu'elle contient, y compris un élément « fixed » comme cette fenêtre.
+      */}
+      {open && createPortal(<RegistrationDialog event={event} onClose={() => setOpen(false)} />, document.body)}
     </article>
   );
 }
