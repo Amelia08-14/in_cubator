@@ -52,7 +52,7 @@ export default function EventCard({ event }: { event: EventItem }) {
   const href = `/evenements/${event.slug}`;
 
   return (
-    <article className="facet-tr group flex h-full flex-col bg-white shadow-lift transition-shadow hover:shadow-deep">
+    <article className="facet-tr group flex h-full min-w-0 flex-col bg-white shadow-lift transition-shadow hover:shadow-deep">
       <Link href={href} className="relative block aspect-[16/9] overflow-hidden bg-violet-dark" aria-label={event.title}>
         {event.coverImage ? (
           // eslint-disable-next-line @next/next/no-img-element -- URL saisie en back-office, domaine libre
@@ -78,7 +78,7 @@ export default function EventCard({ event }: { event: EventItem }) {
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex min-w-0 flex-1 flex-col p-6 [overflow-wrap:anywhere]">
         <h3 className="font-serif text-xl font-bold leading-snug text-violet-dark">
           <Link href={href} className="hover:text-orange-deep">
             {event.title}

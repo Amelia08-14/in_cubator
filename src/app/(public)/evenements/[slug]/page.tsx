@@ -52,8 +52,9 @@ export default async function EvenementPage({ params }: { params: Promise<{ slug
       />
 
       <section className="bg-cream py-16 lg:py-20">
-        <div className="mx-auto grid w-full max-w-[1320px] gap-12 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
+        {/* grid-cols-1 + min-w-0 : un mot ou un lieu très long ne doit jamais élargir la page sur mobile. */}
+        <div className="mx-auto grid w-full max-w-[1320px] grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="min-w-0 [overflow-wrap:anywhere]">
             {event.coverImage && (
               // eslint-disable-next-line @next/next/no-img-element -- URL saisie en back-office, domaine libre
               <img src={event.coverImage} alt="" className="mb-8 aspect-[16/9] w-full object-cover shadow-lift" />
@@ -68,26 +69,26 @@ export default async function EvenementPage({ params }: { params: Promise<{ slug
                 {EVENT_PHASE_LABEL[event.phase]}
               </p>
             )}
-            <ul className="grid gap-4 sm:grid-cols-2">
-              <li className="flex items-start gap-3 bg-white p-5 shadow-lift">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <li className="flex min-w-0 items-start gap-3 bg-white p-5 shadow-lift">
                 <CalendarDays className="mt-0.5 shrink-0 text-orange-accent" size={20} />
-                <div>
+                <div className="min-w-0">
                   <p className="font-bold capitalize text-violet-dark">{formatEventDate(event.startAt)}</p>
                   <p className="text-sm text-gray-main">{formatEventRange(event.startAt, event.endAt)} (heure d&apos;Alger)</p>
                 </div>
               </li>
               {event.location && (
-                <li className="flex items-start gap-3 bg-white p-5 shadow-lift">
+                <li className="flex min-w-0 items-start gap-3 bg-white p-5 shadow-lift">
                   <MapPin className="mt-0.5 shrink-0 text-orange-accent" size={20} />
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-bold text-violet-dark">{event.location}</p>
                     <p className="text-sm text-gray-main">{EVENT_TYPE_LABEL[event.type]}</p>
                   </div>
                 </li>
               )}
-              <li className="flex items-start gap-3 bg-white p-5 shadow-lift">
+              <li className="flex min-w-0 items-start gap-3 bg-white p-5 shadow-lift">
                 <Users className="mt-0.5 shrink-0 text-orange-accent" size={20} />
-                <div>
+                <div className="min-w-0">
                   <p className="font-bold text-violet-dark">
                     {event.spotsLeft} place{event.spotsLeft > 1 ? "s" : ""} restante{event.spotsLeft > 1 ? "s" : ""}
                   </p>
@@ -95,7 +96,7 @@ export default async function EvenementPage({ params }: { params: Promise<{ slug
                 </div>
               </li>
               {event.origin === "CO_ORGANIZED" && event.coOrganizerName && (
-                <li className="bg-white p-5 shadow-lift">
+                <li className="min-w-0 bg-white p-5 shadow-lift">
                   <p className="text-sm text-gray-main">Co-organisé avec</p>
                   <p className="font-bold text-violet-dark">{event.coOrganizerName}</p>
                 </li>
@@ -111,7 +112,7 @@ export default async function EvenementPage({ params }: { params: Promise<{ slug
             )}
           </div>
 
-          <aside id="inscription" className="facet-tr h-fit scroll-mt-28 bg-white p-7 shadow-deep sm:p-9">
+          <aside id="inscription" className="facet-tr h-fit min-w-0 scroll-mt-28 bg-white p-7 shadow-deep sm:p-9">
             {event.canRegister ? (
               <>
                 <h2 className="font-serif text-2xl font-bold text-violet-dark">Je m&apos;inscris</h2>

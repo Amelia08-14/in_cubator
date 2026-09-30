@@ -41,6 +41,7 @@ export default function PublicHeader() {
   }, [open]);
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-[100] transition-all duration-500 ${
         scrolled || open
@@ -119,8 +120,18 @@ export default function PublicHeader() {
         </button>
       </div>
 
+    </header>
+
+      {/*
+        Le panneau est le frère du header, pas son enfant : le backdrop-blur du
+        header crée un contexte qui ancrerait ce « fixed » sur la barre de 72 px
+        (hauteur nulle, menu invisible et impossible à toucher).
+      */}
       {open && (
-        <div className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto bg-paper px-5 pb-10 pt-6 lg:hidden">
+        <div
+          data-lenis-prevent
+          className="fixed inset-x-0 bottom-0 top-[4.5rem] z-[99] overflow-y-auto overscroll-contain bg-paper px-5 pb-10 pt-6 lg:hidden"
+        >
           <nav className="flex flex-col" aria-label="Navigation mobile">
             {NAV.map((item) => (
               <Link
@@ -153,6 +164,6 @@ export default function PublicHeader() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

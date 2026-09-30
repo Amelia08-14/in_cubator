@@ -27,7 +27,7 @@ export default function EventsSection({ events }: { events: EventItem[] }) {
         </Reveal>
 
         {events.length > 0 ? (
-          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {events.map((event, index) => (
               <Reveal key={event.id} delay={index * 0.08}>
                 <EventCard event={event} />
