@@ -45,9 +45,16 @@ export default function Step5Summary() {
       });
 
       if (!response.ok) {
-        const errData = await response.json();
+        const errData = await response.json().catch(() => ({}));
         console.error("API Error:", errData);
-        throw new Error(errData.message || JSON.stringify(errData.errors) || "Erreur lors de la soumission de la candidature");
+        // L'API répond { error: { message, fields } } : on remonte son message à l'utilisateur.
+        const fields = errData?.error?.fields as Record<string, string | string[]> | undefined;
+        const firstField = fields ? Object.values(fields)[0] : undefined;
+        throw new Error(
+          errData?.error?.message ||
+            (Array.isArray(firstField) ? firstField[0] : firstField) ||
+            "Erreur lors de la soumission de la candidature",
+        );
       }
 
       return response.json();
@@ -59,7 +66,7 @@ export default function Step5Summary() {
     },
     onError: (error) => {
       console.error(error);
-      alert("Une erreur est survenue. Veuillez réessayer.");
+      alert(error instanceof Error && error.message ? error.message : "Une erreur est survenue. Veuillez réessayer.");
     },
   });
 
