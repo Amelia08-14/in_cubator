@@ -56,7 +56,9 @@ const httpUrl = z
   .trim()
   .max(191)
   .url()
-  .refine((value) => ['http:', 'https:'].includes(new URL(value).protocol), {
+  // `URL.canParse` ne lève jamais : `new URL('')` lançait une TypeError (500) pour un champ vide,
+  // car zod exécute cette règle même quand `.url()` a déjà échoué.
+  .refine((value) => URL.canParse(value) && ['http:', 'https:'].includes(new URL(value).protocol), {
     message: 'Seules les URL HTTP et HTTPS sont acceptées.',
   });
 

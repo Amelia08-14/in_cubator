@@ -17,7 +17,7 @@ const httpUrl = z
   .trim()
   .url()
   .max(191)
-  .refine((value) => ['http:', 'https:'].includes(new URL(value).protocol), {
+  .refine((value) => URL.canParse(value) && ['http:', 'https:'].includes(new URL(value).protocol), {
     message: 'Seules les URL HTTP et HTTPS sont acceptees.',
   });
 
