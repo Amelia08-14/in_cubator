@@ -20,9 +20,9 @@ export default async function EspaceLayout({
     include: { candidature: true }
   });
 
-  // 1. No profile => Not even applied yet => Redirect to /
+  // 1. No profile => Not even applied yet => Redirect to the application form
   if (!profile) {
-    redirect("/");
+    redirect("/candidature");
   }
 
   // 2. Applied but not ACCEPTEE => Redirect to waiting page

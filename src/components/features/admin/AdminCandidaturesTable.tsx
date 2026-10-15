@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Eye, FolderOpen, MoreVertical, ArrowDown, ChevronDown } from "lucide-react";
+import { Eye, FolderOpen, MoreVertical, ArrowDown } from "lucide-react";
 import Link from "next/link";
 
 interface CandidatureData {
@@ -176,29 +176,12 @@ export default function AdminCandidaturesTable({ candidatures = [] }: { candidat
         </table>
       </div>
 
-      <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
-        <p className="text-[11px] text-gray-500 font-medium">Affichage de 1 à 8 sur 124 candidatures</p>
-        
-        <div className="flex items-center gap-2">
-          <button className="w-7 h-7 rounded flex items-center justify-center border border-gray-200 bg-white text-gray-400 hover:text-gray-600 transition-colors">
-            <ChevronDown size={14} className="rotate-90" />
-          </button>
-          
-          <button className="w-7 h-7 rounded flex items-center justify-center bg-[#47295C] text-white font-bold text-xs shadow-sm">1</button>
-          <button className="w-7 h-7 rounded flex items-center justify-center border border-gray-200 bg-white text-gray-600 font-semibold text-xs hover:bg-gray-50 transition-colors">2</button>
-          <button className="w-7 h-7 rounded flex items-center justify-center border border-gray-200 bg-white text-gray-600 font-semibold text-xs hover:bg-gray-50 transition-colors">3</button>
-          <span className="text-xs text-gray-400 px-1">...</span>
-          <button className="w-7 h-7 rounded flex items-center justify-center border border-gray-200 bg-white text-gray-600 font-semibold text-xs hover:bg-gray-50 transition-colors">16</button>
-          
-          <button className="w-7 h-7 rounded flex items-center justify-center border border-gray-200 bg-white text-gray-400 hover:text-gray-600 transition-colors">
-            <ChevronDown size={14} className="-rotate-90" />
-          </button>
-
-          <div className="ml-4 flex items-center gap-2">
-            <span className="text-[11px] text-gray-500 font-medium">8 / page</span>
-            <ChevronDown size={12} className="text-gray-400" />
-          </div>
-        </div>
+      <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+        <p className="text-[11px] text-gray-500 font-medium">
+          {candidatures.length === 0
+            ? "Aucune candidature reçue pour le moment."
+            : `${candidatures.length} candidature${candidatures.length > 1 ? "s" : ""}`}
+        </p>
       </div>
 
     </div>
